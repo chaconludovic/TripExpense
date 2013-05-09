@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+     <EditText
+         android:id="@+id/nomParticipantText"
+         android:layout_width="220dp"
+         android:layout_height="wrap_content"
+         android:ems="10" >
+         <requestFocus />
+     </EditText>  
+     
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content" >
+
+         <Button
+             android:id="@+id/btnChangeDateArrive"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/button_dateArrive" />
+		<TextView
+	        android:id="@+id/afficherDateArrive"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text=""
+	        android:textAppearance="?android:attr/textAppearanceLarge" />
+     </LinearLayout>
+ 	 <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content" >
+	
+		<Button
+	        android:id="@+id/btnChangeDateDepart"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/button_dateDepart" />
+ 
+		<TextView
+	        android:id="@+id/afficherDateDepart"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text=""
+	        android:textAppearance="?android:attr/textAppearanceLarge" />
+      </LinearLayout> 	 
+	
+     <Button
+         android:id="@+id/ajouterOuModifierParticipantButton"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/button_ajouter"
+         android:onClick="onClick" />
+  
+	
+</LinearLayout>

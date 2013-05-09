@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Commun -->
+    <string name="button_ajouter">Ajouter</string>
+    <string name="button_dateArrive">Date arrivée</string>
+    <string name="button_dateDepart">Date départ</string>
+    <string name="app_name">TripExpense</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <!-- Page de synthese -->
+    <string name="synthese_menu">Synthèse</string>
+    <!-- Page gestion de projet -->
+    <string name="gestion_projet_menu">Gestion projet</string>
+    <string name="title_activity_gestion_projet">Gestion Projet</string>
+    <string name="button_ajouterNouveauProjet">Ajouter le projet</string>
+    <!-- Page gestion de participant -->
+    <string name="button_allerAGestionParticipant">Gestion des participants</string>
+    <string name="title_activity_gestion_participant">Gestion Participant</string>
+    <string name="gestion_participant_menu">Gestion Participant</string>
+    <string name="button_ajouterNouveauParticipant">Ajouter un Participant</string>
+    <string name="title_activity_ajouter_participant">Ajouter Participant</string>
+    <!-- Page de gestion des dépenses -->
+    <string name="gestion_depense_menu">Gestion des dépenses</string>
+    <string name="title_activity_gestion_depense">Gestion Depense</string>
+    <string name="title_activity_ajouter_depense">Ajouter Depense</string>
+ 	<string name="button_dateDebutDepense">Date début</string>
+ 	<string name="button_dateFinDepense">Date fin</string>
+ 	<string name="button_ajouterNouveauDepense">Ajouter dépense</string>
+    
+</resources>

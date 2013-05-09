@@ -1,0 +1,68 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+     <EditText
+         android:id="@+id/nomDepenseText"
+         android:layout_width="220dp"
+         android:layout_height="wrap_content"
+         android:ems="10" >
+         <requestFocus />
+         
+     </EditText>  
+     <Spinner
+        android:id="@+id/listeParticipant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+   	  <EditText
+         android:id="@+id/montantText"
+         android:layout_width="wrap_content"
+	     android:layout_height="wrap_content"
+         android:ems="10" >
+   	 </EditText>  
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="horizontal" >
+
+         <Button
+             android:id="@+id/btnChangeDateDebutDepense"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/button_dateDebutDepense" />
+		<TextView
+	        android:id="@+id/afficherDateDebutDepense"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text=""
+	        android:textAppearance="?android:attr/textAppearanceLarge" />
+     </LinearLayout>
+ 	 <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="horizontal" >
+	
+		<Button
+	        android:id="@+id/btnChangeDateFinDepense"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/button_dateFinDepense" />
+ 
+		<TextView
+	        android:id="@+id/afficherDateFinDepense"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text=""
+	        android:textAppearance="?android:attr/textAppearanceLarge" />
+      </LinearLayout> 	 
+	
+     <Button
+         android:id="@+id/ajouterOuModifierDepenseButton"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/button_ajouter"
+         android:onClick="onClick" />
+  
+	
+</LinearLayout>

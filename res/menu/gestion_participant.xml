@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/synthese_menu"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/synthese_menu"/>
+	<item
+        android:id="@+id/gestion_depense_menu"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/gestion_depense_menu"/>
+</menu>
