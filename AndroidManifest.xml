@@ -64,6 +64,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.eldoraludo.tripexpense.GestionDepenseActivity" />
         </activity>
+        <activity
+            android:name="com.eldoraludo.tripexpense.AjouterProjetActivity"
+            android:label="@string/title_activity_ajouter_projet" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eldoraludo.tripexpense.GestionProjetActivity" />
+        </activity>
     </application>
 
 </manifest>

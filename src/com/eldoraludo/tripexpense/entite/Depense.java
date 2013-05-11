@@ -1,4 +1,4 @@
-package entite;
+package com.eldoraludo.tripexpense.entite;
 
 import java.util.Date;
 

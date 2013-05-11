@@ -17,18 +17,17 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
-
-import entite.Projet;
+import com.eldoraludo.tripexpense.entite.Projet;
 
 public class GestionProjetActivity extends ListActivity {
 	public static final String ID_PROJET_COURANT = "idProjetCourant";
 	protected static final int CONTEXTMENU_DELETEITEM = 0;
-	private EditText nouveauProjetText;
+	protected static final int CONTEXTMENU_MODIFYITEM = 1;
+
+	// private EditText nouveauProjetText;
 	private Button ajouterNouveauProjetButton;
 	private DatabaseHandler databaseHandler;
 	private ListView lv;
@@ -40,10 +39,9 @@ public class GestionProjetActivity extends ListActivity {
 
 		databaseHandler = new DatabaseHandler(this);
 
-		nouveauProjetText = (EditText) findViewById(R.id.nouveauProjetText);
+		// nouveauProjetText = (EditText) findViewById(R.id.nouveauProjetText);
 		ajouterNouveauProjetButton = (Button) findViewById(R.id.ajouterNouveauProjetButton);
 
-		
 		List<Projet> values = databaseHandler.getAllProjet();
 		// Binding resources Array to ListAdapter
 		this.setListAdapter(new ArrayAdapter<Projet>(this,
@@ -81,8 +79,9 @@ public class GestionProjetActivity extends ListActivity {
 			public void onCreateContextMenu(ContextMenu menu, View v,
 					ContextMenuInfo menuInfo) {
 				// TODO Auto-generated method stub
-				menu.setHeaderTitle("ContextMenu");
-				menu.add(0, CONTEXTMENU_DELETEITEM, 0, "Delete this favorite!");
+				menu.setHeaderTitle("Action sur le projet");
+				menu.add(0, CONTEXTMENU_MODIFYITEM, 0, "Modifier");
+				menu.add(0, CONTEXTMENU_DELETEITEM, 0, "Supprimer");
 			}
 
 		});
@@ -113,7 +112,15 @@ public class GestionProjetActivity extends ListActivity {
 			adapter.remove(projetASupprimer);
 			adapter.notifyDataSetChanged();
 			return true; /* true means: "we handled the event". */
-
+		case CONTEXTMENU_MODIFYITEM:
+			Projet projetAModifier = (Projet) lv.getAdapter().getItem(
+					menuInfo.position);
+			Intent i = new Intent(getApplicationContext(),
+					AjouterProjetActivity.class);
+			// sending data to new activity
+			i.putExtra(GestionProjetActivity.ID_PROJET_COURANT, projetAModifier.getId());
+			startActivity(i);
+			return true; /* true means: "we handled the event". */
 		}
 
 		return false;
@@ -132,27 +139,33 @@ public class GestionProjetActivity extends ListActivity {
 	public void onClick(View view) {
 		// If add button was clicked
 		if (ajouterNouveauProjetButton.isPressed()) {
-			ArrayAdapter<Projet> adapter = (ArrayAdapter<Projet>) getListAdapter();
-			// Get entered text
-			String projetTextValue = nouveauProjetText.getText().toString();
-			nouveauProjetText.setText("");
-
-			if (projetTextValue == null || projetTextValue.isEmpty()) {
-				return;
-			}
-
-			// Add text to the database
-			Projet projetCreer = databaseHandler.ajouterOuModifierProjet(Projet
-					.newBuilder().withNom(projetTextValue)
-					.withEstProjetCourant(true).build());
-
-			// Display success information
-			Toast.makeText(getApplicationContext(),
-					"Nouveau projet ajouté " + nouveauProjetText,
-					Toast.LENGTH_LONG).show();
-			adapter.add(projetCreer);
-			adapter.notifyDataSetChanged();
+			Intent intent = new Intent(this, AjouterProjetActivity.class);
+			startActivity(intent);
 		}
+		// If add button was clicked
+		// if (ajouterNouveauProjetButton.isPressed()) {
+		// ArrayAdapter<Projet> adapter = (ArrayAdapter<Projet>)
+		// getListAdapter();
+		// // Get entered text
+		// String projetTextValue = nouveauProjetText.getText().toString();
+		// nouveauProjetText.setText("");
+		//
+		// if (projetTextValue == null || projetTextValue.isEmpty()) {
+		// return;
+		// }
+		//
+		// // Add text to the database
+		// Projet projetCreer = databaseHandler.ajouterOuModifierProjet(Projet
+		// .newBuilder().withNom(projetTextValue)
+		// .withEstProjetCourant(true).build());
+		//
+		// // Display success information
+		// Toast.makeText(getApplicationContext(),
+		// "Nouveau projet ajouté " + nouveauProjetText,
+		// Toast.LENGTH_LONG).show();
+		// adapter.add(projetCreer);
+		// adapter.notifyDataSetChanged();
+		// }
 
 		// } else if (backButton.isPressed()) {
 		// // When back button is pressed

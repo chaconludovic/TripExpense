@@ -16,9 +16,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
+import com.eldoraludo.tripexpense.entite.Depense;
 import com.google.common.base.Preconditions;
 
-import entite.Depense;
 
 public class GestionDepenseActivity extends ListActivity {
 	protected static final String ID_DEPENSE = "id_depense";

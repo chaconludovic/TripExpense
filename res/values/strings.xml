@@ -13,7 +13,8 @@
     <!-- Page gestion de projet -->
     <string name="gestion_projet_menu">Gestion projet</string>
     <string name="title_activity_gestion_projet">Gestion Projet</string>
-    <string name="button_ajouterNouveauProjet">Ajouter le projet</string>
+    <string name="button_ajouterNouveauProjet">Ajouter un projet</string>
+    <string name="title_activity_ajouter_projet">Ajouter Projet</string>    
     <!-- Page gestion de participant -->
     <string name="button_allerAGestionParticipant">Gestion des participants</string>
     <string name="title_activity_gestion_participant">Gestion Participant</string>
@@ -24,8 +25,8 @@
     <string name="gestion_depense_menu">Gestion des dépenses</string>
     <string name="title_activity_gestion_depense">Gestion Depense</string>
     <string name="title_activity_ajouter_depense">Ajouter Depense</string>
- 	<string name="button_dateDebutDepense">Date début</string>
- 	<string name="button_dateFinDepense">Date fin</string>
- 	<string name="button_ajouterNouveauDepense">Ajouter dépense</string>
-    
+    <string name="button_dateDebutDepense">Date début</string>
+    <string name="button_dateFinDepense">Date fin</string>
+    <string name="button_ajouterNouveauDepense">Ajouter dépense</string>
+
 </resources>

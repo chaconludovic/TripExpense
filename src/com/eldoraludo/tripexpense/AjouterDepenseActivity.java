@@ -22,12 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
+import com.eldoraludo.tripexpense.entite.Depense;
+import com.eldoraludo.tripexpense.entite.Participant;
+import com.eldoraludo.tripexpense.entite.TypeDeDepense;
 import com.eldoraludo.tripexpense.util.DateHelper;
 import com.google.common.base.Preconditions;
 
-import entite.Depense;
-import entite.Participant;
-import entite.TypeDeDepense;
 
 public class AjouterDepenseActivity extends Activity {
 	private Integer idDepense;

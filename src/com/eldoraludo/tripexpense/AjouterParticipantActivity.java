@@ -19,10 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
+import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.util.DateHelper;
 import com.google.common.base.Preconditions;
 
-import entite.Participant;
 
 public class AjouterParticipantActivity extends Activity {
 	private Integer idParticipant;

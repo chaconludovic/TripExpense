@@ -16,9 +16,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
+import com.eldoraludo.tripexpense.entite.Participant;
 import com.google.common.base.Preconditions;
 
-import entite.Participant;
 
 public class GestionParticipantActivity extends ListActivity {
 	protected static final String ID_PARTICIPANT = "id_participant";

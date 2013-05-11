@@ -9,12 +9,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.eldoraludo.tripexpense.entite.Depense;
+import com.eldoraludo.tripexpense.entite.Participant;
+import com.eldoraludo.tripexpense.entite.Projet;
+import com.eldoraludo.tripexpense.entite.TypeDeDepense;
 import com.eldoraludo.tripexpense.util.DateHelper;
 
-import entite.Depense;
-import entite.Participant;
-import entite.Projet;
-import entite.TypeDeDepense;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 

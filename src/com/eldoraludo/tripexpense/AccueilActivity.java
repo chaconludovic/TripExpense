@@ -1,8 +1,8 @@
 package com.eldoraludo.tripexpense;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
+import com.eldoraludo.tripexpense.entite.Projet;
 
-import entite.Projet;
 
 import android.os.Bundle;
 import android.app.Activity;

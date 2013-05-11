@@ -1,4 +1,4 @@
-package entite;
+package com.eldoraludo.tripexpense.entite;
 
 import com.google.common.base.Preconditions;
 
