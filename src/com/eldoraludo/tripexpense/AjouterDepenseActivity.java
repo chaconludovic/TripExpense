@@ -19,7 +19,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
 import com.eldoraludo.tripexpense.entite.Depense;
@@ -27,7 +26,6 @@ import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.entite.TypeDeDepense;
 import com.eldoraludo.tripexpense.util.DateHelper;
 import com.google.common.base.Preconditions;
-
 
 public class AjouterDepenseActivity extends Activity {
 	private Integer idDepense;
@@ -62,9 +60,6 @@ public class AjouterDepenseActivity extends Activity {
 				-1);
 		Preconditions.checkState(!idProjet.equals(-1),
 				"L'id du projet doit être définit");
-		Toast.makeText(getApplicationContext(),
-				"Ajouter modifier dépense  " + idDepense, Toast.LENGTH_LONG)
-				.show();
 		databaseHandler = new DatabaseHandler(this);
 		nomDepenseText = (EditText) findViewById(R.id.nomDepenseText);
 		montantText = (EditText) findViewById(R.id.montantText);
@@ -98,7 +93,8 @@ public class AjouterDepenseActivity extends Activity {
 					depense.getDateFin(), Calendar.MONTH);
 			jourFinDepense = DateHelper.recupererDepuisDate(
 					depense.getDateFin(), Calendar.DAY_OF_MONTH);
-			Participant participant = databaseHandler.trouverLeParticipant(depense.getParticipantId());
+			Participant participant = databaseHandler
+					.trouverLeParticipant(depense.getParticipantId());
 			int pos = list.indexOf(participant);
 			listeParticipant.setSelection(pos);
 		} else {
@@ -148,25 +144,10 @@ public class AjouterDepenseActivity extends Activity {
 					.withParticipantId(participantSelectionne.getId())
 					.withTypeDeDepense(TypeDeDepense.COURSE)
 					.withProjetId(idProjet).build());
-			Intent i = new Intent(getApplicationContext(),
-					GestionDepenseActivity.class);
-			i.putExtra(GestionProjetActivity.ID_PROJET_COURANT, idProjet);
-			startActivity(i);
+			Intent i = new Intent();
+			setResult(RESULT_OK, i);
+			super.finish();
 		}
-
-		// } else if (backButton.isPressed()) {
-		// // When back button is pressed
-		// // Create an intent
-		// Intent intent = new Intent(this, MainActivity.class);
-		// // Start activity
-		// startActivity(intent);
-		// // Finish this activity
-		// this.finish();
-		//
-		// // Close the database
-		// dao.close();
-		// }
-
 	}
 
 	// display current date

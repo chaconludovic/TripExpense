@@ -5,23 +5,28 @@ import java.util.List;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
 import com.eldoraludo.tripexpense.entite.Depense;
 import com.google.common.base.Preconditions;
 
-
 public class GestionDepenseActivity extends ListActivity {
+	protected static final int CONTEXTMENU_DELETEITEM = 0;
+	protected static final int CONTEXTMENU_MODIFYITEM = 1;
 	protected static final String ID_DEPENSE = "id_depense";
+	private static final int REQUEST_AJOUTER_DEPENSE = 0;
 	private Integer idProjet;
 	private Button ajouterNouveauDepenseButton;
 	private DatabaseHandler databaseHandler;
@@ -38,9 +43,6 @@ public class GestionDepenseActivity extends ListActivity {
 				-1);
 		Preconditions.checkState(!idProjet.equals(-1),
 				"L'id du projet doit être définit");
-		Toast.makeText(getApplicationContext(),
-				"Gestion dépense du projet courant  " + idProjet,
-				Toast.LENGTH_LONG).show();
 
 		List<Depense> values = databaseHandler.getAllDepense(idProjet);
 		// Binding resources Array to ListAdapter
@@ -65,6 +67,18 @@ public class GestionDepenseActivity extends ListActivity {
 			}
 		});
 
+		lv.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+
+			@Override
+			public void onCreateContextMenu(ContextMenu menu, View v,
+					ContextMenuInfo menuInfo) {
+				// TODO Auto-generated method stub
+				menu.setHeaderTitle("Que voulez vous faire?");
+				menu.add(0, CONTEXTMENU_MODIFYITEM, 0, "Modifier");
+				menu.add(0, CONTEXTMENU_DELETEITEM, 0, "Supprimer");
+			}
+
+		});
 		// Show the Up button in the action bar.
 		setupActionBar();
 	}
@@ -74,7 +88,8 @@ public class GestionDepenseActivity extends ListActivity {
 		if (ajouterNouveauDepenseButton.isPressed()) {
 			Intent intent = new Intent(this, AjouterDepenseActivity.class);
 			intent.putExtra(GestionProjetActivity.ID_PROJET_COURANT, idProjet);
-			startActivity(intent);
+			// startActivity(intent);
+			startActivityForResult(intent, REQUEST_AJOUTER_DEPENSE);
 		}
 	}
 
@@ -92,6 +107,57 @@ public class GestionDepenseActivity extends ListActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.gestion_depense, menu);
 		return true;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK) {
+			if (requestCode == REQUEST_AJOUTER_DEPENSE) {
+				List<Depense> values = databaseHandler.getAllDepense(idProjet);
+				// Binding resources Array to ListAdapter
+				this.setListAdapter(new ArrayAdapter<Depense>(this,
+						android.R.layout.simple_list_item_1, values));
+			}
+		}
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem aItem) {
+
+		AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) aItem
+				.getMenuInfo();
+
+		/* Switch on the ID of the item, to get what the user selected. */
+
+		switch (aItem.getItemId()) {
+
+		case CONTEXTMENU_DELETEITEM:
+			ArrayAdapter<Depense> adapter = (ArrayAdapter<Depense>) getListAdapter();
+
+			/* Get the selected item out of the Adapter by its position. */
+
+			Depense depenseASupprimer = (Depense) lv.getAdapter().getItem(
+					menuInfo.position);
+
+			databaseHandler.deleteDepense(depenseASupprimer);
+			/* Remove it from the list. */
+			adapter.remove(depenseASupprimer);
+			adapter.notifyDataSetChanged();
+			return true; /* true means: "we handled the event". */
+		case CONTEXTMENU_MODIFYITEM:
+			Depense depenseAModifier = (Depense) lv.getAdapter().getItem(
+					menuInfo.position);
+			Intent i = new Intent(getApplicationContext(),
+					AjouterDepenseActivity.class);
+			// sending data to new activity
+			i.putExtra(ID_DEPENSE, depenseAModifier.getId());
+			i.putExtra(GestionProjetActivity.ID_PROJET_COURANT, idProjet);
+			startActivityForResult(i, REQUEST_AJOUTER_DEPENSE);
+			return true; /* true means: "we handled the event". */
+		}
+
+		return false;
+
 	}
 
 	@Override

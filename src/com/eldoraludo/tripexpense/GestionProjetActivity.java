@@ -26,6 +26,7 @@ public class GestionProjetActivity extends ListActivity {
 	public static final String ID_PROJET_COURANT = "idProjetCourant";
 	protected static final int CONTEXTMENU_DELETEITEM = 0;
 	protected static final int CONTEXTMENU_MODIFYITEM = 1;
+	private static final int REQUEST_AJOUTER_PROJET = 1;
 
 	// private EditText nouveauProjetText;
 	private Button ajouterNouveauProjetButton;
@@ -62,16 +63,6 @@ public class GestionProjetActivity extends ListActivity {
 				startActivity(i);
 			}
 		});
-		// lv.setOnItemLongClickListener(new OnItemLongClickListener() {
-		//
-		// @Override
-		// public boolean onItemLongClick(AdapterView<?> parent, View view,
-		// int position, long id) {
-		// // TODO Auto-generated method stub
-		// return false;
-		// }
-		//
-		// });
 
 		lv.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
 
@@ -79,7 +70,7 @@ public class GestionProjetActivity extends ListActivity {
 			public void onCreateContextMenu(ContextMenu menu, View v,
 					ContextMenuInfo menuInfo) {
 				// TODO Auto-generated method stub
-				menu.setHeaderTitle("Action sur le projet");
+				menu.setHeaderTitle("Que voulez vous faire?");
 				menu.add(0, CONTEXTMENU_MODIFYITEM, 0, "Modifier");
 				menu.add(0, CONTEXTMENU_DELETEITEM, 0, "Supprimer");
 			}
@@ -118,13 +109,26 @@ public class GestionProjetActivity extends ListActivity {
 			Intent i = new Intent(getApplicationContext(),
 					AjouterProjetActivity.class);
 			// sending data to new activity
-			i.putExtra(GestionProjetActivity.ID_PROJET_COURANT, projetAModifier.getId());
-			startActivity(i);
+			i.putExtra(ID_PROJET_COURANT,
+					projetAModifier.getId());
+			startActivityForResult(i, REQUEST_AJOUTER_PROJET);
 			return true; /* true means: "we handled the event". */
 		}
 
 		return false;
 
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK) {
+			if (requestCode == REQUEST_AJOUTER_PROJET) {
+				List<Projet> values = databaseHandler.getAllProjet();
+				// Binding resources Array to ListAdapter
+				this.setListAdapter(new ArrayAdapter<Projet>(this,
+						android.R.layout.simple_list_item_1, values));
+			}
+		}
 	}
 
 	/**
@@ -140,46 +144,8 @@ public class GestionProjetActivity extends ListActivity {
 		// If add button was clicked
 		if (ajouterNouveauProjetButton.isPressed()) {
 			Intent intent = new Intent(this, AjouterProjetActivity.class);
-			startActivity(intent);
+			startActivityForResult(intent, REQUEST_AJOUTER_PROJET);
 		}
-		// If add button was clicked
-		// if (ajouterNouveauProjetButton.isPressed()) {
-		// ArrayAdapter<Projet> adapter = (ArrayAdapter<Projet>)
-		// getListAdapter();
-		// // Get entered text
-		// String projetTextValue = nouveauProjetText.getText().toString();
-		// nouveauProjetText.setText("");
-		//
-		// if (projetTextValue == null || projetTextValue.isEmpty()) {
-		// return;
-		// }
-		//
-		// // Add text to the database
-		// Projet projetCreer = databaseHandler.ajouterOuModifierProjet(Projet
-		// .newBuilder().withNom(projetTextValue)
-		// .withEstProjetCourant(true).build());
-		//
-		// // Display success information
-		// Toast.makeText(getApplicationContext(),
-		// "Nouveau projet ajouté " + nouveauProjetText,
-		// Toast.LENGTH_LONG).show();
-		// adapter.add(projetCreer);
-		// adapter.notifyDataSetChanged();
-		// }
-
-		// } else if (backButton.isPressed()) {
-		// // When back button is pressed
-		// // Create an intent
-		// Intent intent = new Intent(this, MainActivity.class);
-		// // Start activity
-		// startActivity(intent);
-		// // Finish this activity
-		// this.finish();
-		//
-		// // Close the database
-		// dao.close();
-		// }
-
 	}
 
 	@Override

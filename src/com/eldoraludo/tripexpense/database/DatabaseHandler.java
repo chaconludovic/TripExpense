@@ -15,7 +15,6 @@ import com.eldoraludo.tripexpense.entite.Projet;
 import com.eldoraludo.tripexpense.entite.TypeDeDepense;
 import com.eldoraludo.tripexpense.util.DateHelper;
 
-
 public class DatabaseHandler extends SQLiteOpenHelper {
 
 	// All Static variables
@@ -67,8 +66,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	private void creationTableDepense(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE IF NOT EXISTS "
-				+ TABLE_DEPENSE
+		db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_DEPENSE
 				+ " (id INTEGER PRIMARY KEY AUTOINCREMENT,nom_depense TEXT, "
 				+ " montant DOUBLE, date_debut TEXT,date_fin TEXT ,type TEXT, "
 				+ " participant_id INTEGER, projet_id INTEGER, "
@@ -240,6 +238,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete(TABLE_PROJET, "id = ?",
 				new String[] { String.valueOf(projet.getId()) });
+		db.close();
+	}
+
+	public void deleteParticipant(Participant participant) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(TABLE_PARTICIPANT, "id = ?",
+				new String[] { String.valueOf(participant.getId()) });
+		db.close();
+	}
+
+	public void deleteDepense(Depense depense) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(TABLE_DEPENSE, "id = ?",
+				new String[] { String.valueOf(depense.getId()) });
 		db.close();
 	}
 

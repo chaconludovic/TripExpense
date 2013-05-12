@@ -1,21 +1,17 @@
 package com.eldoraludo.tripexpense;
 
-import com.eldoraludo.tripexpense.database.DatabaseHandler;
-import com.eldoraludo.tripexpense.entite.Depense;
-import com.eldoraludo.tripexpense.entite.Participant;
-import com.eldoraludo.tripexpense.entite.Projet;
-import com.eldoraludo.tripexpense.entite.TypeDeDepense;
-import com.eldoraludo.tripexpense.util.DateHelper;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.support.v4.app.NavUtils;
+
+import com.eldoraludo.tripexpense.database.DatabaseHandler;
+import com.eldoraludo.tripexpense.entite.Projet;
 
 public class AjouterProjetActivity extends Activity {
 	private Button ajouterOuModifierProjetButton;
@@ -58,9 +54,9 @@ public class AjouterProjetActivity extends Activity {
 					.withId(idProjet == -1 ? null : idProjet)
 					.withNom(nomProjetTextValue).withEstProjetCourant(true)
 					.build());
-			Intent i = new Intent(getApplicationContext(),
-					GestionProjetActivity.class);
-			startActivity(i);
+			Intent i = new Intent();
+			setResult(RESULT_OK, i);
+			super.finish();
 		}
 
 		// } else if (backButton.isPressed()) {
