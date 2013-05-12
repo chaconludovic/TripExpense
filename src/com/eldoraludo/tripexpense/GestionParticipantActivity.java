@@ -104,6 +104,7 @@ public class GestionParticipantActivity extends ListActivity {
 			/* Remove it from the list. */
 			adapter.remove(participantASupprimer);
 			adapter.notifyDataSetChanged();
+			invalidateOptionsMenu();
 			return true; /* true means: "we handled the event". */
 		case CONTEXTMENU_MODIFYITEM:
 			Participant projetAModifier = (Participant) lv.getAdapter()
@@ -114,7 +115,6 @@ public class GestionParticipantActivity extends ListActivity {
 			i.putExtra(ID_PARTICIPANT, projetAModifier.getId());
 			i.putExtra(GestionProjetActivity.ID_PROJET_COURANT, idProjet);
 			startActivityForResult(i, REQUEST_AJOUTER_PARTICIPANT);
-
 			return true; /* true means: "we handled the event". */
 		}
 
@@ -135,15 +135,17 @@ public class GestionParticipantActivity extends ListActivity {
 	 * Set up the {@link android.app.ActionBar}.
 	 */
 	private void setupActionBar() {
-
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.gestion_participant, menu);
+		if (databaseHandler.getParticipantsCount(idProjet) == 0) {
+			MenuItem item = menu.findItem(R.id.gestion_depense_menu);
+			item.setVisible(false);
+		}
 		return true;
 	}
 
@@ -156,6 +158,7 @@ public class GestionParticipantActivity extends ListActivity {
 				// Binding resources Array to ListAdapter
 				this.setListAdapter(new ArrayAdapter<Participant>(this,
 						android.R.layout.simple_list_item_1, values));
+				invalidateOptionsMenu();
 			}
 		}
 	}

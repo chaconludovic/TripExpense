@@ -265,6 +265,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return count;
 	}
 
+	// Getting participant Count
+	public int getParticipantsCount(Integer idProjet) {
+		String countQuery = "SELECT  * FROM " + TABLE_PARTICIPANT
+				+ " WHERE projet_id=" + idProjet;
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+		int count = cursor.getCount();
+		cursor.close();
+		return count;
+	}
+
 	public List<Participant> getAllParticipant(Integer projetId) {
 		List<Participant> participantList = new ArrayList<Participant>();
 		// String selectQuery = "SELECT  * FROM " + TABLE_PARTICIPANT;
