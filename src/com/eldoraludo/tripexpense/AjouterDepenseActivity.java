@@ -1,11 +1,15 @@
 package com.eldoraludo.tripexpense;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +20,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
 import com.eldoraludo.tripexpense.entite.Depense;
@@ -45,6 +50,7 @@ public class AjouterDepenseActivity extends Activity {
 	private DatabaseHandler databaseHandler;
 	static final int DATE_DIALOG_ID_DEBUT_DEPENSE = 999;
 	static final int DATE_DIALOG_ID_FIN_DEPENSE = 1999;
+	private static final int ERROR_DIALOG_DATE_INCOHERENTE = 45464;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -125,25 +131,34 @@ public class AjouterDepenseActivity extends Activity {
 				return;
 			}
 
-			// Add text to the database
-			databaseHandler.ajouterOuModifierDepense(Depense
-					.newBuilder()
-					.withId(idDepense == -1 ? null : idDepense)
-					.withNomDepense(nomDepenseTextValue)
-					.withMontant(Double.valueOf(montantDepenseTextValue))
-					.withDateDebut(
-							DateHelper.convertirIntsToDate(jourDebutDepense,
-									moisDebutDepense, anneeDebutDepense))
-					.withDateFin(
-							DateHelper.convertirIntsToDate(jourFinDepense,
-									moisFinDepense, anneeFinDepense))
-					.withParticipantId(participantSelectionne.getId())
-					.withTypeDeDepense(TypeDeDepense.COURSE)
-					.withProjetId(idProjet).build());
+			Date dateDebut = DateHelper.convertirIntsToDate(jourDebutDepense,
+					moisDebutDepense, anneeDebutDepense);
+			Date dateFin = DateHelper.convertirIntsToDate(jourFinDepense,
+					moisFinDepense, anneeFinDepense);
+			if (dateDebut.after(dateFin)) {
+				showDialog(ERROR_DIALOG_DATE_INCOHERENTE);
+				return;
+			}
+			this.ajouterDepense(nomDepenseTextValue, montantDepenseTextValue,
+					participantSelectionne.getId(), dateDebut, dateFin);
 			Intent i = new Intent();
 			setResult(RESULT_OK, i);
 			super.finish();
 		}
+	}
+
+	private void ajouterDepense(String nomDepenseTextValue,
+			String montantDepenseTextValue, Integer participantId,
+			Date dateDebut, Date dateFin) {
+		// Add text to the database
+		databaseHandler.ajouterOuModifierDepense(Depense.newBuilder()
+				.withId(idDepense == -1 ? null : idDepense)
+				.withNomDepense(nomDepenseTextValue)
+				.withMontant(Double.valueOf(montantDepenseTextValue))
+				.withDateDebut(dateDebut).withDateFin(dateFin)
+				.withParticipantId(participantId)
+				.withTypeDeDepense(TypeDeDepense.COURSE).withProjetId(idProjet)
+				.build());
 	}
 
 	// display current date
@@ -202,8 +217,28 @@ public class AjouterDepenseActivity extends Activity {
 			// set date picker as current date
 			return new DatePickerDialog(this, datePickerListenerFinDepense,
 					anneeFinDepense, moisFinDepense, jourFinDepense);
+		case ERROR_DIALOG_DATE_INCOHERENTE:
+			AlertDialog create = getDialogError("La date de début doit être avant la date de fin");
+			return create;
 		}
 		return null;
+	}
+
+	private AlertDialog getDialogError(String errorMessage) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(
+				AjouterDepenseActivity.this);
+		builder.setTitle("Une erreur est arrivé");
+		builder.setIcon(R.drawable.ic_action_error);
+		// Add the buttons
+		builder.setNeutralButton(errorMessage,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+
+					}
+				});
+
+		AlertDialog create = builder.create();
+		return create;
 	}
 
 	private DatePickerDialog.OnDateSetListener datePickerListenerDebutDepense = new DatePickerDialog.OnDateSetListener() {

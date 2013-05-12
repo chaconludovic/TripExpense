@@ -8,6 +8,7 @@
     <string name="app_name">TripExpense</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="euros">euros</string>
     <!-- Page de synthese -->
     <string name="synthese_menu">Synthèse</string>
     <!-- Page gestion de projet -->

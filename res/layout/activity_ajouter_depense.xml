@@ -15,12 +15,24 @@
         android:id="@+id/listeParticipant"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-   	  <EditText
-         android:id="@+id/montantText"
-         android:layout_width="wrap_content"
-	     android:layout_height="wrap_content"
-         android:ems="10" >
-   	 </EditText>  
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="horizontal" >
+	   	  <EditText
+	         android:id="@+id/montantText"
+	         android:inputType="numberSigned"
+	         android:layout_width="wrap_content"
+		     android:layout_height="wrap_content"
+	         android:ems="10" >
+	      </EditText>  
+	      <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/euros"
+	        android:textAppearance="?android:attr/textAppearanceLarge" />   
+     </LinearLayout>
+   	 
      <LinearLayout
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
