@@ -3,7 +3,6 @@ package com.eldoraludo.tripexpense;
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
 import com.eldoraludo.tripexpense.entite.Projet;
 
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -17,15 +16,15 @@ public class AccueilActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_accueil);
 		DatabaseHandler databaseHandler = new DatabaseHandler(this);
-		// if (databaseHandler.getProjetsCount() != 0) {
-		// Projet projetCourant = databaseHandler.trouverLeProjetCourant();
-		// Intent intent = new Intent(this, SyntheseActivity.class);
-		// intent.putExtra(ID_PROJET_COURANT, projetCourant.getId());
-		// startActivity(intent);
-		// } else {
-		Intent intent = new Intent(this, GestionProjetActivity.class);
-		startActivity(intent);
-		// }
+		if (databaseHandler.getProjetsCount() != 0) {
+			Projet projetCourant = databaseHandler.trouverLeProjetCourant();
+			Intent intent = new Intent(this, SyntheseActivity.class);
+			intent.putExtra(ID_PROJET_COURANT, projetCourant.getId());
+			startActivity(intent);
+		} else {
+			Intent intent = new Intent(this, GestionProjetActivity.class);
+			startActivity(intent);
+		}
 	}
 
 	@Override

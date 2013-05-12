@@ -52,7 +52,7 @@ public class AjouterProjetActivity extends Activity {
 			// Add text to the database
 			databaseHandler.ajouterOuModifierProjet(Projet.newBuilder()
 					.withId(idProjet == -1 ? null : idProjet)
-					.withNom(nomProjetTextValue).withEstProjetCourant(true)
+					.withNom(nomProjetTextValue).withEstProjetCourant(false)
 					.build());
 			Intent i = new Intent();
 			setResult(RESULT_OK, i);

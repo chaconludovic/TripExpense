@@ -1,9 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+  
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/synthese_menu"
         android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
-
+        android:icon="@drawable/ic_action_synthese"
+		android:showAsAction="ifRoom|withText" 
+        android:title="@string/synthese_menu"/>
+  <item
+        android:id="@+id/gestion_participant_menu"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_participant"
+		android:showAsAction="ifRoom|withText" 
+        android:title="@string/gestion_participant_menu"/>
 </menu>

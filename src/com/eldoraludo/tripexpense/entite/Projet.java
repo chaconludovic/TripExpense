@@ -22,6 +22,10 @@ public class Projet extends BaseEntity {
 		this.estCourant = true;
 	}
 
+	public void annuleEtatCourant() {
+		this.estCourant = false;
+	}
+	
 	public static Builder newBuilder() {
 		return new Builder();
 	}

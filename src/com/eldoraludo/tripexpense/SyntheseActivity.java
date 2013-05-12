@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 public class SyntheseActivity extends Activity {
 	private Integer idProjet;
@@ -18,9 +17,6 @@ public class SyntheseActivity extends Activity {
 		Intent intent = getIntent();
 		idProjet = intent.getIntExtra(GestionProjetActivity.ID_PROJET_COURANT,
 				0);
-		Toast.makeText(getApplicationContext(),
-				"Synthese du projet courant  " + idProjet, Toast.LENGTH_LONG)
-				.show();
 		// Show the Up button in the action bar.
 		setupActionBar();
 	}
@@ -29,7 +25,6 @@ public class SyntheseActivity extends Activity {
 	 * Set up the {@link android.app.ActionBar}.
 	 */
 	private void setupActionBar() {
-
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 	}

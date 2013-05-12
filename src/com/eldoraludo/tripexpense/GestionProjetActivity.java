@@ -56,6 +56,15 @@ public class GestionProjetActivity extends ListActivity {
 					int position, long id) {
 				Projet projetACharger = (Projet) lv.getAdapter().getItem(
 						position);
+				// mise à projet courant
+				for (Projet projet : databaseHandler.getAllProjet()) {
+					if (projet.estCourant()) {
+						projet.annuleEtatCourant();
+						databaseHandler.ajouterOuModifierProjet(projet);
+					}
+				}
+				projetACharger.definirEnTantQueCourant();
+				databaseHandler.ajouterOuModifierProjet(projetACharger);
 				Intent i = new Intent(getApplicationContext(),
 						SyntheseActivity.class);
 				// sending data to new activity
@@ -109,8 +118,7 @@ public class GestionProjetActivity extends ListActivity {
 			Intent i = new Intent(getApplicationContext(),
 					AjouterProjetActivity.class);
 			// sending data to new activity
-			i.putExtra(ID_PROJET_COURANT,
-					projetAModifier.getId());
+			i.putExtra(ID_PROJET_COURANT, projetAModifier.getId());
 			startActivityForResult(i, REQUEST_AJOUTER_PROJET);
 			return true; /* true means: "we handled the event". */
 		}
