@@ -3,11 +3,13 @@
     <item
         android:id="@+id/synthese_menu"
         android:orderInCategory="100"
-        android:showAsAction="never"
+        android:icon="@drawable/ic_action_synthese"
+		android:showAsAction="ifRoom|withText" 
         android:title="@string/synthese_menu"/>
 	<item
         android:id="@+id/gestion_depense_menu"
         android:orderInCategory="100"
-        android:showAsAction="never"
+        android:icon="@drawable/ic_action_depense"
+		android:showAsAction="ifRoom|withText" 
         android:title="@string/gestion_depense_menu"/>
 </menu>
