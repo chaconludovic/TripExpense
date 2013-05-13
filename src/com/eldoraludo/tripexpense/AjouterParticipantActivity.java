@@ -61,19 +61,13 @@ public class AjouterParticipantActivity extends Activity {
 			Preconditions.checkNotNull(participant,
 					"Le participant n'a pas été trouvé");
 			nomParticipantText.setText(participant.getNom());
-			anneeArrive = DateHelper.recupererDepuisDate(
-					participant.getDateArrive(), Calendar.YEAR);
-			moisArrive = DateHelper.recupererDepuisDate(
-					participant.getDateArrive(), Calendar.MONTH);
-			jourArrive = DateHelper.recupererDepuisDate(
-					participant.getDateArrive(), Calendar.DAY_OF_MONTH);
+			anneeArrive = participant.getDateArrive().getYear();
+			moisArrive = participant.getDateArrive().getMonthOfYear();
+			jourArrive = participant.getDateArrive().getDayOfMonth();
 
-			anneeDepart = DateHelper.recupererDepuisDate(
-					participant.getDateDepart(), Calendar.YEAR);
-			moisDepart = DateHelper.recupererDepuisDate(
-					participant.getDateDepart(), Calendar.MONTH);
-			jourDepart = DateHelper.recupererDepuisDate(
-					participant.getDateDepart(), Calendar.DAY_OF_MONTH);
+			anneeDepart = participant.getDateDepart().getYear();
+			moisDepart = participant.getDateDepart().getMonthOfYear();
+			jourDepart = participant.getDateDepart().getDayOfMonth();
 		} else {
 			final Calendar c = Calendar.getInstance();
 			anneeArrive = c.get(Calendar.YEAR);

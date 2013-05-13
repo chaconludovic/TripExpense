@@ -1,14 +1,14 @@
 package com.eldoraludo.tripexpense.entite;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
 
 public class Depense extends BaseEntity {
 	private Double montant;
 	private String nomDepense;
-	private Date dateDebut;
-	private Date dateFin;
+	private DateTime dateDebut;
+	private DateTime dateFin;
 	private TypeDeDepense typeDeDepense;
 	private Integer participantId;
 	private Integer projetId;
@@ -37,11 +37,11 @@ public class Depense extends BaseEntity {
 		return projetId;
 	}
 
-	public Date getDateDebut() {
+	public DateTime getDateDebut() {
 		return dateDebut;
 	}
 
-	public Date getDateFin() {
+	public DateTime getDateFin() {
 		return dateFin;
 	}
 
@@ -77,12 +77,12 @@ public class Depense extends BaseEntity {
 			return this;
 		}
 
-		public Builder withDateDebut(Date dateDebut) {
+		public Builder withDateDebut(DateTime dateDebut) {
 			this.depensePartiel.dateDebut = dateDebut;
 			return this;
 		}
 
-		public Builder withDateFin(Date dateFin) {
+		public Builder withDateFin(DateTime dateFin) {
 			this.depensePartiel.dateFin = dateFin;
 			return this;
 		}

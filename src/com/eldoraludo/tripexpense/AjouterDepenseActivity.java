@@ -4,11 +4,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,7 +21,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
 import com.eldoraludo.tripexpense.entite.Depense;
@@ -83,19 +83,13 @@ public class AjouterDepenseActivity extends Activity {
 					"La dépense n'a pas été trouvée");
 			nomDepenseText.setText(depense.getNomDepense());
 			montantText.setText(String.valueOf(depense.getMontant()));
-			anneeDebutDepense = DateHelper.recupererDepuisDate(
-					depense.getDateDebut(), Calendar.YEAR);
-			moisDebutDepense = DateHelper.recupererDepuisDate(
-					depense.getDateDebut(), Calendar.MONTH);
-			jourDebutDepense = DateHelper.recupererDepuisDate(
-					depense.getDateDebut(), Calendar.DAY_OF_MONTH);
+			anneeDebutDepense = depense.getDateDebut().getYear();
+			moisDebutDepense = depense.getDateDebut().getMonthOfYear();
+			jourDebutDepense = depense.getDateDebut().getDayOfMonth();
 
-			anneeFinDepense = DateHelper.recupererDepuisDate(
-					depense.getDateFin(), Calendar.YEAR);
-			moisFinDepense = DateHelper.recupererDepuisDate(
-					depense.getDateFin(), Calendar.MONTH);
-			jourFinDepense = DateHelper.recupererDepuisDate(
-					depense.getDateFin(), Calendar.DAY_OF_MONTH);
+			anneeFinDepense = depense.getDateFin().getYear();
+			moisFinDepense = depense.getDateFin().getMonthOfYear();
+			jourFinDepense = depense.getDateFin().getDayOfMonth();
 			Participant participant = databaseHandler
 					.trouverLeParticipant(depense.getParticipantId());
 			int pos = list.indexOf(participant);
@@ -131,11 +125,11 @@ public class AjouterDepenseActivity extends Activity {
 				return;
 			}
 
-			Date dateDebut = DateHelper.convertirIntsToDate(jourDebutDepense,
-					moisDebutDepense, anneeDebutDepense);
-			Date dateFin = DateHelper.convertirIntsToDate(jourFinDepense,
+			DateTime dateDebut = DateHelper.convertirIntsToDate(
+					jourDebutDepense, moisDebutDepense, anneeDebutDepense);
+			DateTime dateFin = DateHelper.convertirIntsToDate(jourFinDepense,
 					moisFinDepense, anneeFinDepense);
-			if (dateDebut.after(dateFin)) {
+			if (dateDebut.isAfter(dateFin)) {
 				showDialog(ERROR_DIALOG_DATE_INCOHERENTE);
 				return;
 			}
@@ -149,7 +143,7 @@ public class AjouterDepenseActivity extends Activity {
 
 	private void ajouterDepense(String nomDepenseTextValue,
 			String montantDepenseTextValue, Integer participantId,
-			Date dateDebut, Date dateFin) {
+			DateTime dateDebut, DateTime dateFin) {
 		// Add text to the database
 		databaseHandler.ajouterOuModifierDepense(Depense.newBuilder()
 				.withId(idDepense == -1 ? null : idDepense)
