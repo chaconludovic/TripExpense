@@ -46,9 +46,10 @@ public class GestionDepenseActivity extends ListActivity {
 
 		List<Depense> values = databaseHandler.getAllDepense(idProjet);
 		// Binding resources Array to ListAdapter
-		this.setListAdapter(new ArrayAdapter<Depense>(this,
-				android.R.layout.simple_list_item_1, values));
-
+//		this.setListAdapter(new ArrayAdapter<Depense>(this,
+//				android.R.layout.simple_list_item_1, values));
+		DepenseArrayAdapter adapter = new DepenseArrayAdapter(this, values);
+	    this.setListAdapter(adapter);
 		lv = getListView();
 
 		// listening to single list item on click
