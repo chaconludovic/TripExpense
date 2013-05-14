@@ -9,13 +9,16 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="euros">euros</string>
+    <!-- Page d accueil -->
+    <string name="titreTripExpense">Trip Expense</string>
     <!-- Page de synthese -->
     <string name="synthese_menu">Synthèse</string>
+    <string name="pasDeDette">Aucune dette</string>
     <!-- Page gestion de projet -->
     <string name="gestion_projet_menu">Gestion projet</string>
     <string name="title_activity_gestion_projet">Gestion Projet</string>
     <string name="button_ajouterNouveauProjet">Ajouter un projet</string>
-    <string name="title_activity_ajouter_projet">Ajouter Projet</string>    
+    <string name="title_activity_ajouter_projet">Ajouter Projet</string>
     <!-- Page gestion de participant -->
     <string name="button_allerAGestionParticipant">Gestion des participants</string>
     <string name="title_activity_gestion_participant">Gestion Participant</string>

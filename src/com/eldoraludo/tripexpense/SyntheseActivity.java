@@ -256,6 +256,10 @@ public class SyntheseActivity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.synthese, menu);
+		if (databaseHandler.getParticipantsCount(idProjet) == 0) {
+			MenuItem item = menu.findItem(R.id.gestion_depense_menu);
+			item.setVisible(false);
+		}
 		return true;
 	}
 

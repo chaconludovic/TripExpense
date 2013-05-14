@@ -46,10 +46,10 @@ public class GestionDepenseActivity extends ListActivity {
 
 		List<Depense> values = databaseHandler.getAllDepense(idProjet);
 		// Binding resources Array to ListAdapter
-//		this.setListAdapter(new ArrayAdapter<Depense>(this,
-//				android.R.layout.simple_list_item_1, values));
+		// this.setListAdapter(new ArrayAdapter<Depense>(this,
+		// android.R.layout.simple_list_item_1, values));
 		DepenseArrayAdapter adapter = new DepenseArrayAdapter(this, values);
-	    this.setListAdapter(adapter);
+		this.setListAdapter(adapter);
 		lv = getListView();
 
 		// listening to single list item on click
@@ -116,8 +116,9 @@ public class GestionDepenseActivity extends ListActivity {
 			if (requestCode == REQUEST_AJOUTER_DEPENSE) {
 				List<Depense> values = databaseHandler.getAllDepense(idProjet);
 				// Binding resources Array to ListAdapter
-				this.setListAdapter(new ArrayAdapter<Depense>(this,
-						android.R.layout.simple_list_item_1, values));
+				DepenseArrayAdapter adapter = new DepenseArrayAdapter(this,
+						values);
+				this.setListAdapter(adapter);
 			}
 		}
 	}
@@ -171,7 +172,7 @@ public class GestionDepenseActivity extends ListActivity {
 					idProjet);
 			startActivity(pageSynthese);
 			return true;
-		case R.id.gestion_depense_menu:
+		case R.id.gestion_participant_menu:
 			Intent pageDepense = new Intent(getApplicationContext(),
 					GestionParticipantActivity.class);
 			pageDepense.putExtra(GestionProjetActivity.ID_PROJET_COURANT,
