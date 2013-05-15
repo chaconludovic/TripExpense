@@ -15,7 +15,8 @@
             android:id="@+id/nomParticipant"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@+id/label" />
+            android:text=""
+            android:textSize="30sp" />
 
         <ImageView
             android:id="@+id/imageDepense"
@@ -38,13 +39,17 @@
             android:id="@+id/nomDeLaDepense"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@+id/label" />
+            android:text=""
+            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/montantDeLaDepense"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@+id/label" >
+            android:text=""
+            android:textSize="30sp"
+            android:textStyle="bold" >
+
         </TextView>
     </LinearLayout>
 
@@ -58,13 +63,15 @@
             android:id="@+id/dateDebut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@+id/label" />
+            android:text=""
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/dateFin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@+id/label" >
+            android:text=""
+            android:textSize="20sp" >
         </TextView>
     </LinearLayout>
 

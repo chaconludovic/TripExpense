@@ -98,7 +98,6 @@ public class GestionDepenseActivity extends ListActivity {
 	 * Set up the {@link android.app.ActionBar}.
 	 */
 	private void setupActionBar() {
-
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 	}

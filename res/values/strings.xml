@@ -13,6 +13,7 @@
     <string name="titreTripExpense">Trip Expense</string>
     <!-- Page de synthese -->
     <string name="synthese_menu">Synthèse</string>
+    <string name="acce_direct_a_synthese_menu">Accès direct à la synthèse</string>
     <string name="pasDeDette">Aucune dette</string>
     <!-- Page gestion de projet -->
     <string name="gestion_projet_menu">Gestion projet</string>
