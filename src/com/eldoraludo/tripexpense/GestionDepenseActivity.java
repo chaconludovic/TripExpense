@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.eldoraludo.tripexpense.arrayadapter.DepenseArrayAdapter;
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
 import com.eldoraludo.tripexpense.entite.Depense;
 import com.google.common.base.Preconditions;

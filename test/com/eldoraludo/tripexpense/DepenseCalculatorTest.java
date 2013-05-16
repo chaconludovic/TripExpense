@@ -39,6 +39,6 @@ public class DepenseCalculatorTest extends
 	}
 
 	public void testText() {
-
+		
 	}
 }

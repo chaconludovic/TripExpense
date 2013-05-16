@@ -17,9 +17,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 
+import com.eldoraludo.tripexpense.arrayadapter.SyntheseArrayAdapter;
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
+import com.eldoraludo.tripexpense.dto.SyntheseDTO;
 import com.eldoraludo.tripexpense.entite.Depense;
 import com.eldoraludo.tripexpense.entite.Participant;
 
@@ -36,23 +37,31 @@ public class SyntheseActivity extends ListActivity {
 		idProjet = intent.getIntExtra(GestionProjetActivity.ID_PROJET_COURANT,
 				0);
 		databaseHandler = new DatabaseHandler(this);
-		this.setListAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, new ArrayList<String>()));
+		// this.setListAdapter(new ArrayAdapter<String>(this,
+		// android.R.layout.simple_list_item_1, new ArrayList<String>()));
+
+		SyntheseArrayAdapter adapter = new SyntheseArrayAdapter(this,
+				new ArrayList<SyntheseDTO>());
+		this.setListAdapter(adapter);
+
 		setupActionBar();
 		ChargementDepensesEnArrierePlan chargementDepensesEnArrierePlan = new ChargementDepensesEnArrierePlan();
 		chargementDepensesEnArrierePlan.execute();
 	}
 
 	public class ChargementDepensesEnArrierePlan extends
-			AsyncTask<Void, String, List<String>> {
+			AsyncTask<Void, String, List<SyntheseDTO>> {
 		ProgressDialog progress;
 
 		@Override
-		protected void onPostExecute(List<String> result) {
+		protected void onPostExecute(List<SyntheseDTO> result) {
 			progress.dismiss();
-			SyntheseActivity.this.setListAdapter(new ArrayAdapter<String>(
-					SyntheseActivity.this, android.R.layout.simple_list_item_1,
-					result));
+			// SyntheseActivity.this.setListAdapter(new ArrayAdapter<String>(
+			// SyntheseActivity.this, android.R.layout.simple_list_item_1,
+			// result));
+			SyntheseArrayAdapter adapter = new SyntheseArrayAdapter(
+					SyntheseActivity.this, result);
+			SyntheseActivity.this.setListAdapter(adapter);
 		}
 
 		@Override
@@ -62,11 +71,11 @@ public class SyntheseActivity extends ListActivity {
 		}
 
 		@Override
-		protected List<String> doInBackground(Void... noParam) {
+		protected List<SyntheseDTO> doInBackground(Void... noParam) {
 			return getListeDettes();
 		}
 
-		private List<String> getListeDettes() {
+		private List<SyntheseDTO> getListeDettes() {
 			List<Depense> depenses = databaseHandler.getAllDepense(idProjet);
 			List<Participant> participants = databaseHandler
 					.getAllParticipant(idProjet);
@@ -78,8 +87,29 @@ public class SyntheseActivity extends ListActivity {
 					depenses, participants, dateParticipantMap);
 
 			Map<Participant, Map<Participant, Double>> dette = extractionDetteParParticipant(depenseParticipantsMap);
-			return extractionListeDette(dette);
+			return getSyntheseDTO(dette);
 
+		}
+
+		private List<SyntheseDTO> getSyntheseDTO(
+				Map<Participant, Map<Participant, Double>> dette) {
+			List<SyntheseDTO> res = new ArrayList<SyntheseDTO>();
+			for (Participant participant : dette.keySet()) {
+				for (Participant depenseur : dette.get(participant).keySet()) {
+					Double montant = dette.get(participant).get(depenseur);
+					montant = Math.round(montant * 100.0) / 100.0;
+					// String ress = participant.getNom() + " doit à "
+					// + depenseur.getNom() + " la somme de " + montant
+					// + " euros";
+					SyntheseDTO ress = new SyntheseDTO();
+					ress.setParticipant(participant);
+					ress.setDepenseur(depenseur);
+					ress.setMontant(montant);
+					res.add(ress);
+				}
+				publishProgress(participant.toString());
+			}
+			return res;
 		}
 
 		private List<String> extractionListeDette(

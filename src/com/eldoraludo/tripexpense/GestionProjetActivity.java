@@ -1,5 +1,6 @@
 package com.eldoraludo.tripexpense;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -17,7 +18,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.eldoraludo.tripexpense.arrayadapter.ProjetArrayAdapter;
+import com.eldoraludo.tripexpense.arrayadapter.SyntheseArrayAdapter;
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
+import com.eldoraludo.tripexpense.dto.SyntheseDTO;
 import com.eldoraludo.tripexpense.entite.Projet;
 
 public class GestionProjetActivity extends ListActivity {
@@ -43,9 +47,10 @@ public class GestionProjetActivity extends ListActivity {
 
 		List<Projet> values = databaseHandler.getAllProjet();
 		// Binding resources Array to ListAdapter
-		this.setListAdapter(new ArrayAdapter<Projet>(this,
-				android.R.layout.simple_list_item_1, values));
-
+		// this.setListAdapter(new ArrayAdapter<Projet>(this,
+		// android.R.layout.simple_list_item_1, values));
+		ProjetArrayAdapter adapter = new ProjetArrayAdapter(this, values);
+		this.setListAdapter(adapter);
 		lv = getListView();
 
 		// listening to single list item on click
@@ -128,10 +133,17 @@ public class GestionProjetActivity extends ListActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode == RESULT_OK) {
 			if (requestCode == REQUEST_AJOUTER_PROJET) {
+				// List<Projet> values = databaseHandler.getAllProjet();
+				// // Binding resources Array to ListAdapter
+				// this.setListAdapter(new ArrayAdapter<Projet>(this,
+				// android.R.layout.simple_list_item_1, values));
 				List<Projet> values = databaseHandler.getAllProjet();
 				// Binding resources Array to ListAdapter
-				this.setListAdapter(new ArrayAdapter<Projet>(this,
-						android.R.layout.simple_list_item_1, values));
+				// this.setListAdapter(new ArrayAdapter<Projet>(this,
+				// android.R.layout.simple_list_item_1, values));
+				ProjetArrayAdapter adapter = new ProjetArrayAdapter(this,
+						values);
+				this.setListAdapter(adapter);
 			}
 		}
 	}

@@ -1,7 +1,11 @@
-package com.eldoraludo.tripexpense;
+package com.eldoraludo.tripexpense.arrayadapter;
 
 import java.util.List;
 
+import com.eldoraludo.tripexpense.R;
+import com.eldoraludo.tripexpense.R.drawable;
+import com.eldoraludo.tripexpense.R.id;
+import com.eldoraludo.tripexpense.R.layout;
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
 import com.eldoraludo.tripexpense.entite.Depense;
 import com.eldoraludo.tripexpense.entite.Participant;

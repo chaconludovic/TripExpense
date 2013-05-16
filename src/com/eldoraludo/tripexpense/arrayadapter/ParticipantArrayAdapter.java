@@ -1,4 +1,4 @@
-package com.eldoraludo.tripexpense;
+package com.eldoraludo.tripexpense.arrayadapter;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.eldoraludo.tripexpense.R;
 import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.util.DateHelper;
 
