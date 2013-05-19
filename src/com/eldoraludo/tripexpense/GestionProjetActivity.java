@@ -1,6 +1,5 @@
 package com.eldoraludo.tripexpense;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -19,9 +18,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.eldoraludo.tripexpense.arrayadapter.ProjetArrayAdapter;
-import com.eldoraludo.tripexpense.arrayadapter.SyntheseArrayAdapter;
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
-import com.eldoraludo.tripexpense.dto.SyntheseDTO;
 import com.eldoraludo.tripexpense.entite.Projet;
 
 public class GestionProjetActivity extends ListActivity {

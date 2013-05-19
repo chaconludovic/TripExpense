@@ -59,13 +59,13 @@ public class GestionDepenseActivity extends ListActivity {
 					int position, long id) {
 				Depense depenseAModifier = (Depense) lv.getAdapter().getItem(
 						position);
-				Intent i = new Intent(getApplicationContext(),
+				Intent intent = new Intent(getApplicationContext(),
 						AjouterDepenseActivity.class);
-				// sending data to new activity
-				i.putExtra(ID_DEPENSE, depenseAModifier.getId());
-				i.putExtra(GestionProjetActivity.ID_PROJET_COURANT, idProjet);
-
-				startActivity(i);
+				intent.putExtra(GestionProjetActivity.ID_PROJET_COURANT,
+						idProjet);
+				intent.putExtra(ID_DEPENSE, depenseAModifier.getId());
+				startActivityForResult(intent, REQUEST_AJOUTER_DEPENSE);
+				
 			}
 		});
 

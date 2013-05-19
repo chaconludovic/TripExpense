@@ -60,13 +60,12 @@ public class GestionParticipantActivity extends ListActivity {
 					int position, long id) {
 				Participant participantAModifier = (Participant) lv
 						.getAdapter().getItem(position);
-				Intent i = new Intent(getApplicationContext(),
+				Intent intent = new Intent(getApplicationContext(),
 						AjouterParticipantActivity.class);
-				// sending data to new activity
-				i.putExtra(ID_PARTICIPANT, participantAModifier.getId());
-				i.putExtra(GestionProjetActivity.ID_PROJET_COURANT, idProjet);
-
-				startActivity(i);
+				intent.putExtra(GestionProjetActivity.ID_PROJET_COURANT,
+						idProjet);
+				intent.putExtra(ID_PARTICIPANT, participantAModifier.getId());
+				startActivityForResult(intent, REQUEST_AJOUTER_PARTICIPANT);
 			}
 		});
 		lv.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {

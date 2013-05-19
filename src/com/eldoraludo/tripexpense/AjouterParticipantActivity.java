@@ -121,12 +121,12 @@ public class AjouterParticipantActivity extends Activity {
 		// set current date into textview
 		tvDisplayDateArrive.setText(new StringBuilder()
 				// Month is 0 based, just add 1
-				.append(jourArrive).append("/").append(moisArrive + 1)
-				.append("/").append(anneeArrive).append(" "));
+				.append(jourArrive).append("/").append(moisArrive).append("/")
+				.append(anneeArrive).append(" "));
 		tvDisplayDateDepart.setText(new StringBuilder()
 				// Month is 0 based, just add 1
-				.append(jourDepart).append("/").append(moisDepart + 1)
-				.append("/").append(anneeDepart).append(" "));
+				.append(jourDepart).append("/").append(moisDepart).append("/")
+				.append(anneeDepart).append(" "));
 	}
 
 	public void addListenerOnButton() {
@@ -164,11 +164,11 @@ public class AjouterParticipantActivity extends Activity {
 		case DATE_DIALOG_ID_ARRIVE:
 			// set date picker as current date
 			return new DatePickerDialog(this, datePickerListenerArrive,
-					anneeArrive, moisArrive, jourArrive);
+					anneeArrive, moisArrive - 1, jourArrive);
 		case DATE_DIALOG_ID_DEPART:
 			// set date picker as current date
 			return new DatePickerDialog(this, datePickerListenerDepart,
-					anneeDepart, moisDepart, jourDepart);
+					anneeDepart, moisDepart - 1, jourDepart);
 		}
 		return null;
 	}
@@ -179,12 +179,12 @@ public class AjouterParticipantActivity extends Activity {
 		public void onDateSet(DatePicker view, int selectedYear,
 				int selectedMonth, int selectedDay) {
 			anneeArrive = selectedYear;
-			moisArrive = selectedMonth;
+			moisArrive = selectedMonth + 1;
 			jourArrive = selectedDay;
 
 			// set selected date into textview
 			tvDisplayDateArrive.setText(new StringBuilder().append(jourArrive)
-					.append("/").append(moisArrive + 1).append("/")
+					.append("/").append(moisArrive).append("/")
 					.append(anneeArrive).append(" "));
 
 		}
@@ -195,12 +195,12 @@ public class AjouterParticipantActivity extends Activity {
 		public void onDateSet(DatePicker view, int selectedYear,
 				int selectedMonth, int selectedDay) {
 			anneeDepart = selectedYear;
-			moisDepart = selectedMonth;
+			moisDepart = selectedMonth + 1;
 			jourDepart = selectedDay;
 
 			// set selected date into textview
 			tvDisplayDateDepart.setText(new StringBuilder().append(jourDepart)
-					.append("/").append(moisDepart + 1).append("/")
+					.append("/").append(moisDepart).append("/")
 					.append(anneeDepart).append(" "));
 
 		}

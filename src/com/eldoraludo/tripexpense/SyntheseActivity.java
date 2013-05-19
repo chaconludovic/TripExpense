@@ -158,21 +158,23 @@ public class SyntheseActivity extends ListActivity {
 					continue;
 				}
 				for (Participant depenseur : dette.get(participant).keySet()) {
-					if (!detteFinal.containsKey(depenseur)) {
+					if (!detteFinal.containsKey(depenseur)
+							|| !detteFinal.containsKey(participant)) {
 						continue;
 					}
-					if (dette.containsKey(depenseur)
-							&& dette.get(depenseur).containsKey(participant)) {
-						Double montantDuParLeDepenseurAuParticipant = dette
+					if (detteFinal.get(depenseur).containsKey(participant)
+							&& detteFinal.get(participant).containsKey(
+									depenseur)) {
+						Double montantDuParLeDepenseurAuParticipant = detteFinal
 								.get(depenseur).get(participant);
 						if (this.estDetteDuDepenseSuperieurADetteDuParticipant(
-								dette, participant, depenseur,
+								detteFinal, participant, depenseur,
 								montantDuParLeDepenseurAuParticipant)) {
-							this.recalculDeLaDetteDuDepenseur(dette,
+							this.recalculDeLaDetteDuDepenseur(detteFinal,
 									detteFinal, participant, depenseur,
 									montantDuParLeDepenseurAuParticipant);
 						} else {
-							this.recalculDeLaDetteDuParticipant(dette,
+							this.recalculDeLaDetteDuParticipant(detteFinal,
 									detteFinal, participant, depenseur,
 									montantDuParLeDepenseurAuParticipant);
 						}
@@ -203,7 +205,11 @@ public class SyntheseActivity extends ListActivity {
 				Double detteDuDepenseur) {
 			Double detteDuParticipant = dette.get(participant).get(depenseur);
 			Double detteRecalcule = detteDuParticipant - detteDuDepenseur;
-			detteFinal.get(participant).put(depenseur, detteRecalcule);
+			if (detteRecalcule == 0) {
+				detteFinal.get(participant).remove(depenseur);
+			} else {
+				detteFinal.get(participant).put(depenseur, detteRecalcule);
+			}
 			detteFinal.get(depenseur).remove(participant);
 			if (detteFinal.get(depenseur).size() == 0) {
 				detteFinal.remove(depenseur);
@@ -217,7 +223,11 @@ public class SyntheseActivity extends ListActivity {
 				Double detteDuDepenseur) {
 			Double detteDuParticipant = dette.get(participant).get(depenseur);
 			Double detteRecalcule = detteDuDepenseur - detteDuParticipant;
-			detteFinal.get(depenseur).put(participant, detteRecalcule);
+			if (detteRecalcule == 0) {
+				detteFinal.get(depenseur).remove(participant);
+			} else {
+				detteFinal.get(depenseur).put(participant, detteRecalcule);
+			}
 			detteFinal.get(participant).remove(depenseur);
 			if (detteFinal.get(participant).size() == 0) {
 				detteFinal.remove(participant);

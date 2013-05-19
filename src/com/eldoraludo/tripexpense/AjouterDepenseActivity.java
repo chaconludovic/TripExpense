@@ -162,12 +162,11 @@ public class AjouterDepenseActivity extends Activity {
 		// set current date into textview
 		tvDisplayDateDebutDepense.setText(new StringBuilder()
 				// Month is 0 based, just add 1
-				.append(jourDebutDepense).append("/")
-				.append(moisDebutDepense + 1).append("/")
-				.append(anneeDebutDepense).append(" "));
+				.append(jourDebutDepense).append("/").append(moisDebutDepense)
+				.append("/").append(anneeDebutDepense).append(" "));
 		tvDisplayDateFinDepense.setText(new StringBuilder()
 				// Month is 0 based, just add 1
-				.append(jourFinDepense).append("/").append(moisFinDepense + 1)
+				.append(jourFinDepense).append("/").append(moisFinDepense)
 				.append("/").append(anneeFinDepense).append(" "));
 	}
 
@@ -206,11 +205,11 @@ public class AjouterDepenseActivity extends Activity {
 		case DATE_DIALOG_ID_DEBUT_DEPENSE:
 			// set date picker as current date
 			return new DatePickerDialog(this, datePickerListenerDebutDepense,
-					anneeDebutDepense, moisDebutDepense, jourDebutDepense);
+					anneeDebutDepense, moisDebutDepense - 1, jourDebutDepense);
 		case DATE_DIALOG_ID_FIN_DEPENSE:
 			// set date picker as current date
 			return new DatePickerDialog(this, datePickerListenerFinDepense,
-					anneeFinDepense, moisFinDepense, jourFinDepense);
+					anneeFinDepense, moisFinDepense - 1, jourFinDepense);
 		case ERROR_DIALOG_DATE_INCOHERENTE:
 			AlertDialog create = getDialogError("La date de début doit être avant la date de fin");
 			return create;
@@ -241,13 +240,13 @@ public class AjouterDepenseActivity extends Activity {
 		public void onDateSet(DatePicker view, int selectedYear,
 				int selectedMonth, int selectedDay) {
 			anneeDebutDepense = selectedYear;
-			moisDebutDepense = selectedMonth;
+			moisDebutDepense = selectedMonth + 1;
 			jourDebutDepense = selectedDay;
 
 			// set selected date into textview
 			tvDisplayDateDebutDepense.setText(new StringBuilder()
 					.append(jourDebutDepense).append("/")
-					.append(moisDebutDepense + 1).append("/")
+					.append(moisDebutDepense).append("/")
 					.append(anneeDebutDepense).append(" "));
 
 		}
@@ -259,14 +258,13 @@ public class AjouterDepenseActivity extends Activity {
 		public void onDateSet(DatePicker view, int selectedYear,
 				int selectedMonth, int selectedDay) {
 			anneeFinDepense = selectedYear;
-			moisFinDepense = selectedMonth;
+			moisFinDepense = selectedMonth + 1;
 			jourFinDepense = selectedDay;
 
 			// set selected date into textview
 			tvDisplayDateFinDepense.setText(new StringBuilder()
-					.append(jourFinDepense).append("/")
-					.append(moisFinDepense + 1).append("/")
-					.append(anneeFinDepense).append(" "));
+					.append(jourFinDepense).append("/").append(moisFinDepense)
+					.append("/").append(anneeFinDepense).append(" "));
 
 		}
 	};
