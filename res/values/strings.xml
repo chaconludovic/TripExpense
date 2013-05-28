@@ -26,6 +26,7 @@
     <string name="gestion_participant_menu">Gestion Participant</string>
     <string name="button_ajouterNouveauParticipant">Ajouter un Participant</string>
     <string name="title_activity_ajouter_participant">Ajouter Participant</string>
+    <string name="button_getContact">Recupérer un contact</string>
     <!-- Page de gestion des dépenses -->
     <string name="gestion_depense_menu">Gestion des dépenses</string>
     <string name="title_activity_gestion_depense">Gestion Depense</string>
