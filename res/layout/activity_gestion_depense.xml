@@ -1,19 +1,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="#deffc8">
 
     <LinearLayout
       android:id="@+id/formLayout"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content" >
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_vertical|center_horizontal">
  
       <Button
           android:id="@+id/ajouterNouveauDepenseButton"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:text="@string/button_ajouterNouveauDepense"
-          android:onClick="onClick" />
+          android:onClick="onClick"
+          android:background="@drawable/btn_blue"
+          style="@style/ButtonText"
+              />
     </LinearLayout>
 	<ListView
         android:id="@android:id/list"

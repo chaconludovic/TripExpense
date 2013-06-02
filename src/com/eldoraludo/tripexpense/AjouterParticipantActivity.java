@@ -18,11 +18,14 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
 import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.util.DateHelper;
 import com.google.common.base.Preconditions;
+
+import org.joda.time.DateTime;
 
 public class AjouterParticipantActivity extends Activity {
     private static final int CONTACT_PICKER_RESULT = 0;
@@ -105,6 +108,20 @@ public class AjouterParticipantActivity extends Activity {
             String participantTextValue = nomParticipantText.getText()
                     .toString();
             if (participantTextValue == null || participantTextValue.isEmpty()) {
+                Toast.makeText(this, "Il faut préciser un nom de participant", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Participant participant = databaseHandler.trouverLeParticipant(participantTextValue);
+            if (participant != null && (idParticipant == -1 || !idParticipant.equals(participant.getId()))) {
+                Toast.makeText(this, "Le nom du participant " + participantTextValue + " existe déjà", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            DateTime dateArrive = DateHelper.convertirIntsToDate(jourArrive,
+                    moisArrive, anneeArrive);
+            DateTime dateDepart = DateHelper.convertirIntsToDate(jourDepart,
+                    moisDepart, anneeDepart);
+            if (dateArrive.isAfter(dateDepart)) {
+                Toast.makeText(this, "La date d'arrivée doit être avant la date de départ du participant", Toast.LENGTH_SHORT).show();
                 return;
             }
             nomParticipantText.setText("");
@@ -114,11 +131,9 @@ public class AjouterParticipantActivity extends Activity {
                     .withId(idParticipant == -1 ? null : idParticipant)
                     .withNom(participantTextValue)
                     .withDateArrive(
-                            DateHelper.convertirIntsToDate(jourArrive,
-                                    moisArrive, anneeArrive))
+                            dateArrive)
                     .withDateDepart(
-                            DateHelper.convertirIntsToDate(jourDepart,
-                                    moisDepart, anneeDepart))
+                            dateDepart)
                     .withProjetId(idProjet);
             if (participantTextValue.equals(nomRecupererDepuisListeContact)) {
                 participantBuilder.withContactPhoneId(idContactRecupereDepuisListeContact);
@@ -141,11 +156,11 @@ public class AjouterParticipantActivity extends Activity {
         tvDisplayDateArrive = (TextView) findViewById(R.id.afficherDateArrive);
         tvDisplayDateDepart = (TextView) findViewById(R.id.afficherDateDepart);
         // set current date into textview
-        tvDisplayDateArrive.setText(new StringBuilder()
+        tvDisplayDateArrive.setText(new StringBuilder().append("   ")
                 // Month is 0 based, just add 1
                 .append(jourArrive).append("/").append(moisArrive).append("/")
                 .append(anneeArrive).append(" "));
-        tvDisplayDateDepart.setText(new StringBuilder()
+        tvDisplayDateDepart.setText(new StringBuilder().append("   ")
                 // Month is 0 based, just add 1
                 .append(jourDepart).append("/").append(moisDepart).append("/")
                 .append(anneeDepart).append(" "));
@@ -229,7 +244,7 @@ public class AjouterParticipantActivity extends Activity {
             jourArrive = selectedDay;
 
             // set selected date into textview
-            tvDisplayDateArrive.setText(new StringBuilder().append(jourArrive)
+            tvDisplayDateArrive.setText(new StringBuilder().append(jourArrive).append("   ")
                     .append("/").append(moisArrive).append("/")
                     .append(anneeArrive).append(" "));
 
@@ -245,7 +260,7 @@ public class AjouterParticipantActivity extends Activity {
             jourDepart = selectedDay;
 
             // set selected date into textview
-            tvDisplayDateDepart.setText(new StringBuilder().append(jourDepart)
+            tvDisplayDateDepart.setText(new StringBuilder().append(jourDepart).append("   ")
                     .append("/").append(moisDepart).append("/")
                     .append(anneeDepart).append(" "));
 

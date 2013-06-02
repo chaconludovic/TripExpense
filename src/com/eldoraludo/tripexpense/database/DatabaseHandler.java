@@ -149,14 +149,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[]{String.valueOf(projetId)}, null, null, null,
                 null);
         Projet projet = null;
-        if (cursor != null) {
-            cursor.moveToFirst();
-            projet = Projet
-                    .newBuilder()
-                    .withId(cursor.getInt(0))
-                    .withNom(cursor.getString(1))
-                    .withEstProjetCourant(
-                            (cursor.getInt(2) == 0) ? false : true).build();
+        if (cursor.moveToFirst()) {
+            projet = getProjet(cursor);
         }
         db.close();
         return projet;
@@ -169,24 +163,41 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "id=?", new String[]{String.valueOf(idParticipant)}, null,
                 null, null, null);
         Participant participant = null;
-        if (cursor != null) {
-            cursor.moveToFirst();
-            participant = Participant
-                    .newBuilder()
-                    .withId(cursor.getInt(0))
-                    .withNom(cursor.getString(1))
-                    .withDateArrive(
-                            DateHelper.convertirStringToDate(cursor
-                                    .getString(2)))
-                    .withDateDepart(
-                            DateHelper.convertirStringToDate(cursor
-                                    .getString(3)))
-                    .withProjetId(cursor.getInt(4))
-                    .withContactPhoneId(cursor.getString(5))
-                    .build();
+        if (cursor.moveToFirst()) {
+            participant = getParticipant(cursor);
         }
         db.close();
         return participant;
+    }
+
+    public Participant trouverLeParticipant(String nom) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_PARTICIPANT, new String[]{"id",
+                "nom_participant", "date_arrive", "date_depart", "projet_id", "contact_phone_id"},
+                "nom_participant=?", new String[]{nom}, null,
+                null, null, null);
+        Participant participant = null;
+        if (cursor.moveToFirst()) {
+            participant = getParticipant(cursor);
+        }
+        db.close();
+        return participant;
+    }
+
+    private Participant getParticipant(Cursor cursor) {
+        return Participant
+                .newBuilder()
+                .withId(cursor.getInt(0))
+                .withNom(cursor.getString(1))
+                .withDateArrive(
+                        DateHelper.convertirStringToDate(cursor
+                                .getString(2)))
+                .withDateDepart(
+                        DateHelper.convertirStringToDate(cursor
+                                .getString(3)))
+                .withProjetId(cursor.getInt(4))
+                .withContactPhoneId(cursor.getString(5))
+                .build();
     }
 
     public Depense trouverLaDepense(Integer idDepense) {
@@ -197,26 +208,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 new String[]{String.valueOf(idDepense)}, null, null, null,
                 null);
         Depense depense = null;
-        if (cursor != null) {
-            cursor.moveToFirst();
-            depense = Depense
-                    .newBuilder()
-                    .withId(cursor.getInt(0))
-                    .withNomDepense(cursor.getString(1))
-                    .withMontant(Double.valueOf(cursor.getString(2)))
-                    .withDateDebut(
-                            DateHelper.convertirStringToDate(cursor
-                                    .getString(3)))
-                    .withDateFin(
-                            DateHelper.convertirStringToDate(cursor
-                                    .getString(4)))
-                    .withTypeDeDepense(
-                            TypeDeDepense.valueOf(cursor.getString(5)))
-                    .withParticipantId(cursor.getInt(6))
-                    .withProjetId(cursor.getInt(7)).build();
+        if (cursor.moveToFirst()) {
+            depense = getDepense(cursor);
         }
         db.close();
         return depense;
+    }
+
+    private Depense getDepense(Cursor cursor) {
+        return Depense
+                .newBuilder()
+                .withId(cursor.getInt(0))
+                .withNomDepense(cursor.getString(1))
+                .withMontant(Double.valueOf(cursor.getString(2)))
+                .withDateDebut(
+                        DateHelper.convertirStringToDate(cursor
+                                .getString(3)))
+                .withDateFin(
+                        DateHelper.convertirStringToDate(cursor
+                                .getString(4)))
+                .withTypeDeDepense(
+                        TypeDeDepense.valueOf(cursor.getString(5)))
+                .withParticipantId(cursor.getInt(6))
+                .withProjetId(cursor.getInt(7)).build();
     }
 
     // Getting single projet
@@ -225,13 +239,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_PROJET, new String[]{"id", "nom",
                 "est_courant"}, "est_courant=1", new String[]{}, null, null,
                 null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
+        Projet projet = null;
+        if (cursor.moveToFirst()) {
+            projet = getProjet(cursor);
+        }
+        db.close();
+        return projet;
+    }
 
-        Projet projet = Projet.newBuilder().withId(cursor.getInt(0))
+    private Projet getProjet(Cursor cursor) {
+        return Projet.newBuilder().withId(cursor.getInt(0))
                 .withNom(cursor.getString(1))
                 .withEstProjetCourant((cursor.getInt(2) == 0) ? false : true)
                 .build();
+    }
+
+    public Projet trouverLeProjet(String nom) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_PROJET, new String[]{"id", "nom",
+                "est_courant"}, "nom=?", new String[]{nom}, null, null,
+                null, null);
+        Projet projet = null;
+        if (cursor.moveToFirst()) {
+            projet = getProjet(cursor);
+
+        }
         db.close();
         return projet;
     }
@@ -365,5 +397,4 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
         return projetList;
     }
-
 }
