@@ -1,40 +1,69 @@
 package com.eldoraludo.tripexpense.arrayadapter;
 
-import java.util.List;
-
+import android.content.ContentUris;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eldoraludo.tripexpense.R;
 import com.eldoraludo.tripexpense.dto.SyntheseDTO;
+import com.eldoraludo.tripexpense.entite.Participant;
+
+import java.io.InputStream;
+import java.util.List;
 
 public class SyntheseArrayAdapter extends ArrayAdapter<SyntheseDTO> {
-	private final Context context;
-	private final List<SyntheseDTO> values;
+    private final Context context;
+    private final List<SyntheseDTO> values;
 
-	public SyntheseArrayAdapter(Context context, List<SyntheseDTO> values) {
-		super(context, R.layout.ligne_synthese, values);
-		this.context = context;
-		this.values = values;
-	}
+    public SyntheseArrayAdapter(Context context, List<SyntheseDTO> values) {
+        super(context, R.layout.ligne_synthese, values);
+        this.context = context;
+        this.values = values;
+    }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
 
-		LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View depenseLigneView = inflater.inflate(R.layout.ligne_synthese,
-				parent, false);
-		SyntheseDTO syntheseDTO = values.get(position);
-		TextView syntheseText = (TextView) depenseLigneView
-				.findViewById(R.id.syntheseText);
-		syntheseText.setText(syntheseDTO.getParticipant().getNom() + " doit à "
-				+ syntheseDTO.getDepenseur().getNom() + " la somme de "
-				+ syntheseDTO.getMontant() + " euros");
-		return depenseLigneView;
-	}
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View depenseLigneView = inflater.inflate(R.layout.ligne_synthese,
+                parent, false);
+        SyntheseDTO syntheseDTO = values.get(position);
+        ImageView photoParticipant = (ImageView) depenseLigneView.findViewById(R.id.photo_participant);
+        this.definirPhoto(syntheseDTO.getParticipant(), photoParticipant);
+        TextView syntheseText = (TextView) depenseLigneView
+                .findViewById(R.id.syntheseText);
+        syntheseText.setText(syntheseDTO.getParticipant().getNom() + " doit la somme de "
+                + syntheseDTO.getMontant() + " euros à " + syntheseDTO.getDepenseur().getNom());
+        ImageView photoDepenseur = (ImageView) depenseLigneView.findViewById(R.id.photo_depenseur);
+        this.definirPhoto(syntheseDTO.getDepenseur(), photoDepenseur);
+        return depenseLigneView;
+    }
+
+    private void definirPhoto(Participant participant, ImageView photoImage) {
+        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.valueOf(participant.getContactPhoneId()));
+        InputStream inputStream = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(),
+                contactUri);
+        if (inputStream != null) {
+            try {
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeStream(inputStream), 220, 220, false);
+                photoImage.setImageBitmap(scaledBitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            photoImage.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
 }

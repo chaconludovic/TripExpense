@@ -244,7 +244,7 @@ public class AjouterParticipantActivity extends Activity {
             jourArrive = selectedDay;
 
             // set selected date into textview
-            tvDisplayDateArrive.setText(new StringBuilder().append(jourArrive).append("   ")
+            tvDisplayDateArrive.setText(new StringBuilder().append("   ").append(jourArrive)
                     .append("/").append(moisArrive).append("/")
                     .append(anneeArrive).append(" "));
 
@@ -260,7 +260,7 @@ public class AjouterParticipantActivity extends Activity {
             jourDepart = selectedDay;
 
             // set selected date into textview
-            tvDisplayDateDepart.setText(new StringBuilder().append(jourDepart).append("   ")
+            tvDisplayDateDepart.setText(new StringBuilder().append("   ").append(jourDepart)
                     .append("/").append(moisDepart).append("/")
                     .append(anneeDepart).append(" "));
 

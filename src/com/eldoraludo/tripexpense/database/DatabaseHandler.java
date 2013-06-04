@@ -376,6 +376,39 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return depenseList;
     }
 
+    public List<Depense> trouverToutesLesDepensesDuParticipant(Integer projetId, Integer participantId) {
+        List<Depense> depenseList = new ArrayList<Depense>();
+        // String selectQuery = "SELECT  * FROM " + TABLE_PARTICIPANT;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_DEPENSE, new String[]{"id",
+                "nom_depense", " montant", "date_debut", "date_fin", "type",
+                "participant_id", "projet_id"}, "projet_id=? and participant_id=? ",
+                new String[]{String.valueOf(projetId), String.valueOf(participantId)}, null, null, null,
+                null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                depenseList.add(Depense
+                        .newBuilder()
+                        .withId(cursor.getInt(0))
+                        .withNomDepense(cursor.getString(1))
+                        .withMontant(Double.valueOf(cursor.getString(2)))
+                        .withDateDebut(
+                                DateHelper.convertirStringToDate(cursor
+                                        .getString(3)))
+                        .withDateFin(
+                                DateHelper.convertirStringToDate(cursor
+                                        .getString(4)))
+                        .withTypeDeDepense(
+                                TypeDeDepense.valueOf(cursor.getString(5)))
+                        .withParticipantId(cursor.getInt(6))
+                        .withProjetId(cursor.getInt(7)).build());
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        return depenseList;
+    }
+
     // Getting All projets
     public List<Projet> getAllProjet() {
         List<Projet> projetList = new ArrayList<Projet>();
