@@ -151,8 +151,10 @@ public class GestionParticipantActivity extends ListActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.gestion_participant, menu);
         if (databaseHandler.getParticipantsCount(idProjet) == 0) {
-            MenuItem item = menu.findItem(R.id.gestion_depense_menu);
-            item.setVisible(false);
+            MenuItem menuDepense = menu.findItem(R.id.gestion_participant_depense_menu);
+            menuDepense.setVisible(false);
+            MenuItem menuEmprunt = menu.findItem(R.id.gestion_participant_emprunt_menu);
+            menuEmprunt.setVisible(false);
         }
         return true;
     }
@@ -174,19 +176,26 @@ public class GestionParticipantActivity extends ListActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.synthese_menu:
+            case R.id.gestion_participant_synthese_menu:
                 Intent pageSynthese = new Intent(getApplicationContext(),
                         SyntheseActivity.class);
                 pageSynthese.putExtra(GestionProjetActivity.ID_PROJET_COURANT,
                         idProjet);
                 startActivity(pageSynthese);
                 return true;
-            case R.id.gestion_depense_menu:
+            case R.id.gestion_participant_depense_menu:
                 Intent pageDepense = new Intent(getApplicationContext(),
                         GestionDepenseActivity.class);
                 pageDepense.putExtra(GestionProjetActivity.ID_PROJET_COURANT,
                         idProjet);
                 startActivity(pageDepense);
+                return true;
+            case R.id.gestion_participant_emprunt_menu:
+                Intent pageEmprunt = new Intent(getApplicationContext(),
+                        GestionEmpruntActivity.class);
+                pageEmprunt.putExtra(GestionProjetActivity.ID_PROJET_COURANT,
+                        idProjet);
+                startActivity(pageEmprunt);
                 return true;
         }
         return super.onOptionsItemSelected(item);

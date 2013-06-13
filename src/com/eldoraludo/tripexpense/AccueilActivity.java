@@ -49,7 +49,7 @@ public class AccueilActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.gestion_projet_menu:
+		case R.id.gestion_accueil_projet_menu:
 			Intent pageGestionProjet = new Intent(getApplicationContext(),
 					GestionProjetActivity.class);
 			startActivity(pageGestionProjet);

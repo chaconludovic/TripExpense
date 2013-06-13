@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.eldoraludo.tripexpense.entite.Depense;
+import com.eldoraludo.tripexpense.entite.Emprunt;
 import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.entite.Projet;
 import com.eldoraludo.tripexpense.entite.TypeDeDepense;
@@ -28,6 +29,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TABLE_PROJET = "projet";
     private static final String TABLE_PARTICIPANT = "participant";
     private static final String TABLE_DEPENSE = "depense";
+    private static final String TABLE_EMPRUNT = "emprunt";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -46,10 +48,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DEPENSE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PARTICIPANT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJET);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EMPRUNT);
 
         creationTableProjet(db);
         creationTableParticipant(db);
         creationTableDepense(db);
+        creationTableEmprunt(db);
 
     }
 
@@ -70,6 +74,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + " (id INTEGER PRIMARY KEY AUTOINCREMENT,nom_depense TEXT, "
                 + " montant DOUBLE, date_debut TEXT,date_fin TEXT ,type TEXT, "
                 + " participant_id INTEGER, projet_id INTEGER, "
+                + " FOREIGN KEY (participant_id) REFERENCES PARTICIPANT (id), "
+                + " FOREIGN KEY (projet_id) REFERENCES PROJET (id))");
+    }
+
+    private void creationTableEmprunt(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_EMPRUNT
+                + " (id INTEGER PRIMARY KEY AUTOINCREMENT,nom_emprunt TEXT, "
+                + " montant DOUBLE,  "
+                + " date_emprunt TEXT , "
+                + " emprunteur_id INTEGER, "
+                + " participant_id INTEGER, "
+                + " projet_id INTEGER, "
+                + " FOREIGN KEY (emprunteur_id) REFERENCES PARTICIPANT (id), "
                 + " FOREIGN KEY (participant_id) REFERENCES PARTICIPANT (id), "
                 + " FOREIGN KEY (projet_id) REFERENCES PROJET (id))");
     }
@@ -139,6 +156,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         db.close();
         return depense;
+    }
+
+    // Adding new Emprunt
+    public Emprunt ajouterOuModifierEmprunt(Emprunt emprunt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("nom_emprunt", emprunt.getNomEmprunt());
+        values.put("montant", emprunt.getMontant());
+        values.put("date_emprunt",
+                DateHelper.convertirDateToString(emprunt.getDateEmprunt()));
+        values.put("projet_id", String.valueOf(emprunt.getProjetId()));
+        values.put("emprunteur_id", String.valueOf(emprunt.getEmprunteurId()));
+        values.put("participant_id", String.valueOf(emprunt.getParticipantId()));
+        if (emprunt.getId() == null) {
+            long insertId = db.insert(TABLE_EMPRUNT, null, values);
+            emprunt.definirLId(insertId);
+        } else {
+            db.update(TABLE_EMPRUNT, values, "id = ?",
+                    new String[]{String.valueOf(emprunt.getId())});
+        }
+        db.close();
+        return emprunt;
     }
 
     // Getting single projet
@@ -215,6 +254,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return depense;
     }
 
+    public Emprunt trouverLEmprunt(Integer idEmprunt) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_EMPRUNT, new String[]{"id",
+                "nom_depense", " montant", "date_emprunt",
+                "emprunteur_id", "participant_id", "projet_id"}, "id=?",
+                new String[]{String.valueOf(idEmprunt)}, null, null, null,
+                null);
+        Emprunt emprunt = null;
+        if (cursor.moveToFirst()) {
+            emprunt = getEmprunt(cursor);
+        }
+        db.close();
+        return emprunt;
+    }
+
     private Depense getDepense(Cursor cursor) {
         return Depense
                 .newBuilder()
@@ -231,6 +285,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         TypeDeDepense.valueOf(cursor.getString(5)))
                 .withParticipantId(cursor.getInt(6))
                 .withProjetId(cursor.getInt(7)).build();
+    }
+
+    private Emprunt getEmprunt(Cursor cursor) {
+        return Emprunt
+                .newBuilder()
+                .withId(cursor.getInt(0))
+                .withNomEmprunt(cursor.getString(1))
+                .withMontant(Double.valueOf(cursor.getString(2)))
+                .withDateEmprunt(
+                        DateHelper.convertirStringToDate(cursor
+                                .getString(3)))
+                .withEmprunteurId(cursor.getInt(4))
+                .withParticipantId(cursor.getInt(5))
+                .withProjetId(cursor.getInt(6)).build();
     }
 
     // Getting single projet
@@ -287,6 +355,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_DEPENSE, "id = ?",
                 new String[]{String.valueOf(depense.getId())});
+        db.close();
+    }
+
+    public void deleteEmprunt(Emprunt emprunt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_EMPRUNT, "id = ?",
+                new String[]{String.valueOf(emprunt.getId())});
         db.close();
     }
 
@@ -376,6 +451,34 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return depenseList;
     }
 
+    public List<Emprunt> getAllEmprunt(Integer projetId) {
+        List<Emprunt> empruntList = new ArrayList<Emprunt>();
+        // String selectQuery = "SELECT  * FROM " + TABLE_PARTICIPANT;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_EMPRUNT, new String[]{"id",
+                "nom_emprunt", " montant", "date_emprunt",
+                "emprunteur_id", "participant_id", "projet_id"}, "projet_id=?",
+                new String[]{String.valueOf(projetId)}, null, null, null,
+                null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                empruntList.add(Emprunt
+                        .newBuilder()
+                        .withId(cursor.getInt(0))
+                        .withNomEmprunt(cursor.getString(1))
+                        .withMontant(Double.valueOf(cursor.getString(2)))
+                        .withDateEmprunt(DateHelper.convertirStringToDate(cursor
+                                .getString(3)))
+                        .withEmprunteurId(cursor.getInt(4))
+                        .withParticipantId(cursor.getInt(5))
+                        .withProjetId(cursor.getInt(6)).build());
+            } while (cursor.moveToNext());
+        }
+        db.close();
+        return empruntList;
+    }
+
     public List<Depense> trouverToutesLesDepensesDuParticipant(Integer projetId, Integer participantId) {
         List<Depense> depenseList = new ArrayList<Depense>();
         // String selectQuery = "SELECT  * FROM " + TABLE_PARTICIPANT;
@@ -430,4 +533,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
         return projetList;
     }
+
+
 }
