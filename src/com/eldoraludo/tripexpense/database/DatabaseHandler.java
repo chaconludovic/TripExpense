@@ -257,7 +257,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Emprunt trouverLEmprunt(Integer idEmprunt) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_EMPRUNT, new String[]{"id",
-                "nom_depense", " montant", "date_emprunt",
+                "nom_emprunt", " montant", "date_emprunt",
                 "emprunteur_id", "participant_id", "projet_id"}, "id=?",
                 new String[]{String.valueOf(idEmprunt)}, null, null, null,
                 null);

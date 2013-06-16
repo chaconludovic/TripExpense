@@ -23,6 +23,7 @@ import com.eldoraludo.tripexpense.calculateur.SyntheseCalculateur;
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
 import com.eldoraludo.tripexpense.dto.SyntheseDTO;
 import com.eldoraludo.tripexpense.entite.Depense;
+import com.eldoraludo.tripexpense.entite.Emprunt;
 import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.util.ShakeListener;
 
@@ -104,7 +105,8 @@ public class SyntheseActivity extends ListActivity implements SensorEventListene
             List<Depense> depenses = databaseHandler.getAllDepense(idProjet);
             List<Participant> participants = databaseHandler
                     .getAllParticipant(idProjet);
-            return new SyntheseCalculateur(depenses, participants).run();
+            List<Emprunt> emprunts = databaseHandler.getAllEmprunt(idProjet);
+            return new SyntheseCalculateur(emprunts, depenses, participants).run();
         }
     }
 
@@ -126,11 +128,12 @@ public class SyntheseActivity extends ListActivity implements SensorEventListene
             MenuItem menuEmprunt = menu.findItem(R.id.gestion_synthese_emprunt_menu);
             menuEmprunt.setVisible(false);
         }
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.gestion_synthese_projet_menu:
                 startActivity(new Intent(getApplicationContext(),
@@ -157,10 +160,6 @@ public class SyntheseActivity extends ListActivity implements SensorEventListene
                 startActivity(pageEmprunt);
                 return true;
         }
-        Intent pageAccueil = new Intent(getApplicationContext(),
-                AccueilActivity.class);
-        startActivity(pageAccueil);
-        super.finish();
         return true;
     }
 

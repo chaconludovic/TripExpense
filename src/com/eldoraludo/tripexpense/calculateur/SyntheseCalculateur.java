@@ -14,6 +14,7 @@ import org.joda.time.DateTime;
 
 import com.eldoraludo.tripexpense.dto.SyntheseDTO;
 import com.eldoraludo.tripexpense.entite.Depense;
+import com.eldoraludo.tripexpense.entite.Emprunt;
 import com.eldoraludo.tripexpense.entite.Participant;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -23,11 +24,13 @@ import com.google.common.collect.Sets.SetView;
 public class SyntheseCalculateur implements Calculateur<List<SyntheseDTO>> {
 
     private List<Depense> depenses;
+    private List<Emprunt> emprunts;
     private List<Participant> participants;
 
-    public SyntheseCalculateur(List<Depense> depenses,
+    public SyntheseCalculateur(List<Emprunt> emprunts, List<Depense> depenses,
                                List<Participant> participants) {
         this.depenses = depenses;
+        this.emprunts = emprunts;
         this.participants = participants;
     }
 
@@ -42,11 +45,40 @@ public class SyntheseCalculateur implements Calculateur<List<SyntheseDTO>> {
         Map<Participant, Map<Participant, Double>> dette = extractionDetteParParticipant(
                 depenseParticipantsMap, participants);
 
-        Map<Participant, Map<Participant, Double>> detteRectifie = nettoyageDesRelationsSymetriques(dette);
+        Map<Participant, Map<Participant, Double>> detteEtEmprunt = gestionEmprunt(dette, emprunts, participants);
+
+        Map<Participant, Map<Participant, Double>> detteRectifie = nettoyageDesRelationsSymetriques(detteEtEmprunt);
 
         Map<Participant, Map<Participant, Double>> detteSimplifie = extractionDetteSimplifierParParticipant(detteRectifie);
 
         return getSyntheseDTO(detteSimplifie);
+    }
+
+    public Map<Participant, Map<Participant, Double>> gestionEmprunt(Map<Participant, Map<Participant, Double>> donnees, List<Emprunt> emprunts, List<Participant> participants) {
+        if (emprunts == null) {
+            return donnees;
+        }
+        if (donnees == null) {
+            donnees = new HashMap<Participant, Map<Participant, Double>>();
+        }
+        for (Emprunt emprunt : emprunts) {
+            Participant emprunteur = trouverLeParticipant(participants, emprunt.getEmprunteurId());
+            Preconditions.checkNotNull(emprunteur, "L'emprunteur n'a pas été trouvé dans la liste");
+            Participant participant = trouverLeParticipant(participants, emprunt.getParticipantId());
+            Preconditions.checkNotNull(participant, "L'emprunteur n'a pas été trouvé dans la liste");
+            if (donnees.containsKey(emprunteur)) {
+                Double montantDOrigine = 0.0;
+                if (donnees.get(emprunteur).containsKey(participant)) {
+                    montantDOrigine = donnees.get(emprunteur).get(participant);
+                }
+                donnees.get(emprunteur).put(participant, montantDOrigine + emprunt.getMontant());
+            } else {
+                HashMap<Participant, Double> participantEmprunt = new HashMap<Participant, Double>();
+                participantEmprunt.put(participant, emprunt.getMontant());
+                donnees.put(emprunteur, participantEmprunt);
+            }
+        }
+        return donnees;
     }
 
     public Map<Participant, Map<Participant, Double>> extractionDetteSimplifierParParticipant(

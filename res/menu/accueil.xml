@@ -2,7 +2,7 @@
 
     <item
         android:id="@+id/gestion_accueil_projet_menu"
-        android:icon="@drawable/ic_action_projet"
+        android:icon="@drawable/ic_menu_projet"
         android:orderInCategory="100"
         android:showAsAction="ifRoom|withText"
         android:title="@string/gestion_projet_menu"/>

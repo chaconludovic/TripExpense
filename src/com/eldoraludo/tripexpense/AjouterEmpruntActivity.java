@@ -87,7 +87,7 @@ public class AjouterEmpruntActivity extends Activity {
             jourEmprunt = emprunt.getDateEmprunt().getDayOfMonth();
 
             Participant emprunteur = databaseHandler
-                    .trouverLeParticipant(emprunt.getParticipantId());
+                    .trouverLeParticipant(emprunt.getEmprunteurId());
             Participant participant = databaseHandler
                     .trouverLeParticipant(emprunt.getParticipantId());
             int posEmprunteur = list.indexOf(emprunteur);
@@ -124,6 +124,11 @@ public class AjouterEmpruntActivity extends Activity {
                     .getSelectedItem();
             Participant participantSelectionne = (Participant) listeParticipant
                     .getSelectedItem();
+            if (emprunteurSelectionne.getId().equals(participantSelectionne.getId())){
+                Toast.makeText(this, "Il faut que l'emprunteur soit différent de l'emprunter", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             DateTime dateEmprunt = DateHelper.convertirIntsToDate(
                     jourEmprunt, moisEmprunt, anneeEmprunt);
 

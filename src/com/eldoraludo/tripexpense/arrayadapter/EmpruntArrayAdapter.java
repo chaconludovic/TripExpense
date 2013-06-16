@@ -5,30 +5,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eldoraludo.tripexpense.R;
-import com.eldoraludo.tripexpense.R.drawable;
 import com.eldoraludo.tripexpense.R.id;
 import com.eldoraludo.tripexpense.R.layout;
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
-import com.eldoraludo.tripexpense.entite.Depense;
 import com.eldoraludo.tripexpense.entite.Emprunt;
 import com.eldoraludo.tripexpense.entite.Participant;
-import com.eldoraludo.tripexpense.entite.TypeDeDepense;
 import com.eldoraludo.tripexpense.util.DateHelper;
 
 import java.util.List;
 
 public class EmpruntArrayAdapter extends ArrayAdapter<Emprunt> {
 	private final Context context;
-	private final List<Emprunt> values;
+	private final List<Emprunt> emprunts;
 
-	public EmpruntArrayAdapter(Context context, List<Emprunt> values) {
-		super(context, layout.ligne_emprunt, values);
+	public EmpruntArrayAdapter(Context context, List<Emprunt> emprunts) {
+		super(context, layout.ligne_emprunt, emprunts);
 		this.context = context;
-		this.values = values;
+		this.emprunts = emprunts;
 	}
 
 	@Override
@@ -49,11 +45,11 @@ public class EmpruntArrayAdapter extends ArrayAdapter<Emprunt> {
                 .findViewById(R.id.dateEmprunt);
 		TextView montantText = (TextView) empruntLigneView
 				.findViewById(id.montantDeLEmprunt);
-		Emprunt emprunt = values.get(position);
+		Emprunt emprunt = emprunts.get(position);
         Participant emprunteur = databaseHandler.trouverLeParticipant(emprunt
                 .getEmprunteurId());
         Participant participant = databaseHandler.trouverLeParticipant(emprunt
-                .getEmprunteurId());
+                .getParticipantId());
         dateEmpruntText.setText(DateHelper.prettyDate(emprunt.getDateEmprunt()));
 		nomDeLEmpruntText.setText(" " + emprunt.getNomEmprunt());
 		montantText.setText(" " + emprunt.getMontant() + " euros");
