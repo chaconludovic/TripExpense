@@ -23,6 +23,7 @@ import com.google.common.base.Preconditions;
 
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -63,7 +64,12 @@ public class AjouterEmpruntActivity extends Activity {
 
         listeEmprunteur = (Spinner) findViewById(R.id.listeEmprunteur);
         listeParticipant = (Spinner) findViewById(R.id.listeParticipant);
-        List<Participant> list = databaseHandler.getAllParticipant(idProjet);
+        List<Participant> list = new ArrayList<Participant>();
+        try {
+            list = databaseHandler.getAllParticipant(idProjet);
+        } catch (Exception e) {
+            Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
         ArrayAdapter<Participant> emprunteurArrayAdapter = new ArrayAdapter<Participant>(
                 this, android.R.layout.simple_spinner_item, list);
@@ -76,25 +82,31 @@ public class AjouterEmpruntActivity extends Activity {
                 .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         listeParticipant.setAdapter(participantArrayAdapter);
 
+        Emprunt emprunt = null;
         if (idEmprunt != -1) {
-            Emprunt emprunt = databaseHandler.trouverLEmprunt(idEmprunt);
-            Preconditions.checkNotNull(emprunt,
-                    "La dépense n'a pas été trouvée");
-            nomEmpruntText.setText(emprunt.getNomEmprunt());
-            montantText.setText(String.valueOf(emprunt.getMontant()));
-            anneeEmprunt = emprunt.getDateEmprunt().getYear();
-            moisEmprunt = emprunt.getDateEmprunt().getMonthOfYear();
-            jourEmprunt = emprunt.getDateEmprunt().getDayOfMonth();
+            try {
+                emprunt = databaseHandler.trouverLEmprunt(idEmprunt);
+                Preconditions.checkNotNull(emprunt,
+                        "La dépense n'a pas été trouvée");
+                nomEmpruntText.setText(emprunt.getNomEmprunt());
+                montantText.setText(String.valueOf(emprunt.getMontant()));
+                anneeEmprunt = emprunt.getDateEmprunt().getYear();
+                moisEmprunt = emprunt.getDateEmprunt().getMonthOfYear();
+                jourEmprunt = emprunt.getDateEmprunt().getDayOfMonth();
 
-            Participant emprunteur = databaseHandler
-                    .trouverLeParticipant(emprunt.getEmprunteurId());
-            Participant participant = databaseHandler
-                    .trouverLeParticipant(emprunt.getParticipantId());
-            int posEmprunteur = list.indexOf(emprunteur);
-            listeEmprunteur.setSelection(posEmprunteur);
-            int posParticipant = list.indexOf(participant);
-            listeParticipant.setSelection(posParticipant);
-        } else {
+                Participant emprunteur = databaseHandler
+                        .trouverLeParticipant(emprunt.getEmprunteurId());
+                Participant participant = databaseHandler
+                        .trouverLeParticipant(emprunt.getParticipantId());
+                int posEmprunteur = list.indexOf(emprunteur);
+                listeEmprunteur.setSelection(posEmprunteur);
+                int posParticipant = list.indexOf(participant);
+                listeParticipant.setSelection(posParticipant);
+            } catch (Exception e) {
+                Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (emprunt == null) {
             final Calendar c = Calendar.getInstance();
             anneeEmprunt = c.get(Calendar.YEAR);
             moisEmprunt = c.get(Calendar.MONTH);
@@ -107,39 +119,43 @@ public class AjouterEmpruntActivity extends Activity {
     }
 
     public void onClick(View view) {
-        // If add button was clicked
-        if (ajouterOuModifierEmpruntButton.isPressed()) {
-            // Get entered text
-            String nomEmpruntTextValue = nomEmpruntText.getText().toString();
-            if (nomEmpruntTextValue == null || nomEmpruntTextValue.isEmpty()) {
-                Toast.makeText(this, "Il faut préciser un nom de dépense", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            String montantEmpruntTextValue = montantText.getText().toString();
-            if (montantEmpruntTextValue == null || montantEmpruntTextValue.isEmpty()) {
-                Toast.makeText(this, "Il faut préciser un montant", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Participant emprunteurSelectionne = (Participant) listeEmprunteur
-                    .getSelectedItem();
-            Participant participantSelectionne = (Participant) listeParticipant
-                    .getSelectedItem();
-            if (emprunteurSelectionne.getId().equals(participantSelectionne.getId())){
-                Toast.makeText(this, "Il faut que l'emprunteur soit différent de l'emprunter", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        try {
+            // If add button was clicked
+            if (ajouterOuModifierEmpruntButton.isPressed()) {
+                // Get entered text
+                String nomEmpruntTextValue = nomEmpruntText.getText().toString();
+                if (nomEmpruntTextValue == null || nomEmpruntTextValue.isEmpty()) {
+                    Toast.makeText(this, "Il faut préciser un nom de dépense", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String montantEmpruntTextValue = montantText.getText().toString();
+                if (montantEmpruntTextValue == null || montantEmpruntTextValue.isEmpty()) {
+                    Toast.makeText(this, "Il faut préciser un montant", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Participant emprunteurSelectionne = (Participant) listeEmprunteur
+                        .getSelectedItem();
+                Participant participantSelectionne = (Participant) listeParticipant
+                        .getSelectedItem();
+                if (emprunteurSelectionne.getId().equals(participantSelectionne.getId())) {
+                    Toast.makeText(this, "Il faut que l'emprunteur soit différent de l'emprunter", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            DateTime dateEmprunt = DateHelper.convertirIntsToDate(
-                    jourEmprunt, moisEmprunt, anneeEmprunt);
+                DateTime dateEmprunt = DateHelper.convertirIntsToDate(
+                        jourEmprunt, moisEmprunt, anneeEmprunt);
 
 
-            nomEmpruntText.setText("");
-            montantText.setText("");
-            this.ajouterEmprunt(nomEmpruntTextValue, montantEmpruntTextValue,
-                    emprunteurSelectionne.getId(), participantSelectionne.getId(), dateEmprunt);
-            Intent i = new Intent();
-            setResult(RESULT_OK, i);
-            super.finish();
+                nomEmpruntText.setText("");
+                montantText.setText("");
+                this.ajouterEmprunt(nomEmpruntTextValue, montantEmpruntTextValue,
+                        emprunteurSelectionne.getId(), participantSelectionne.getId(), dateEmprunt);
+                Intent i = new Intent();
+                setResult(RESULT_OK, i);
+                super.finish();
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

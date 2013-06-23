@@ -1,8 +1,5 @@
 package com.eldoraludo.tripexpense;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -25,15 +22,18 @@ import com.eldoraludo.tripexpense.dto.SyntheseDTO;
 import com.eldoraludo.tripexpense.entite.Depense;
 import com.eldoraludo.tripexpense.entite.Emprunt;
 import com.eldoraludo.tripexpense.entite.Participant;
-import com.eldoraludo.tripexpense.util.ShakeListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SyntheseActivity extends ListActivity implements SensorEventListener {
+    static final int PICK_DATE_REQUEST = 1;
     private static boolean CALCUL_EN_COURS = false;
     private Integer idProjet;
     private DatabaseHandler databaseHandler;
     private ChargementDepensesEnArrierePlan chargementDepensesEnArrierePlan;
 
-    private String TAG = ShakeListener.class.getSimpleName();
+    private String TAG = SyntheseActivity.class.getSimpleName();
     private static final int FORCE_THRESHOLD = 800;
     private static final int TIME_THRESHOLD = 100;
     private static final int SHAKE_TIMEOUT = 500;

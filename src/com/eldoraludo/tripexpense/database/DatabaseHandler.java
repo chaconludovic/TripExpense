@@ -1,8 +1,5 @@
 package com.eldoraludo.tripexpense.database;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,6 +12,9 @@ import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.entite.Projet;
 import com.eldoraludo.tripexpense.entite.TypeDeDepense;
 import com.eldoraludo.tripexpense.util.DateHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -44,16 +44,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // DROP table
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DEPENSE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PARTICIPANT);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJET);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EMPRUNT);
+        try {
+            // DROP table
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_DEPENSE);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PARTICIPANT);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJET);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_EMPRUNT);
 
-        creationTableProjet(db);
-        creationTableParticipant(db);
-        creationTableDepense(db);
-        creationTableEmprunt(db);
+            creationTableProjet(db);
+            creationTableParticipant(db);
+            creationTableDepense(db);
+            creationTableEmprunt(db);
+        } finally {
+            db.close();
+        }
 
     }
 
@@ -98,114 +102,134 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // Adding new projet
     public Projet ajouterOuModifierProjet(Projet projet) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("nom", projet.getNom());
-        values.put("est_courant", projet.estCourant() ? 1 : 0);
-        if (projet.getId() == null) {
-            long insertId = db.insert(TABLE_PROJET, null, values);
-            projet.definirLId(insertId);
-        } else {
-            db.update(TABLE_PROJET, values, "id = ?",
-                    new String[]{String.valueOf(projet.getId())});
+        try {
+            ContentValues values = new ContentValues();
+            values.put("nom", projet.getNom());
+            values.put("est_courant", projet.estCourant() ? 1 : 0);
+            if (projet.getId() == null) {
+                long insertId = db.insert(TABLE_PROJET, null, values);
+                projet.definirLId(insertId);
+            } else {
+                db.update(TABLE_PROJET, values, "id = ?",
+                        new String[]{String.valueOf(projet.getId())});
+            }
+        } finally {
+            db.close();
         }
-        db.close();
         return projet;
     }
 
     // Adding new participant
     public Participant ajouterOuModifierParticipant(Participant participant) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("nom_participant", participant.getNom());
-        values.put("projet_id", participant.getProjetId());
-        values.put("date_arrive",
-                DateHelper.convertirDateToString(participant.getDateArrive()));
-        values.put("date_depart",
-                DateHelper.convertirDateToString(participant.getDateDepart()));
-        values.put("contact_phone_id", participant.getContactPhoneId());
-        if (participant.getId() == null) {
-            long insertId = db.insert(TABLE_PARTICIPANT, null, values);
-            participant.definirLId(insertId);
-        } else {
-            db.update(TABLE_PARTICIPANT, values, "id = ?",
-                    new String[]{String.valueOf(participant.getId())});
+        try {
+            ContentValues values = new ContentValues();
+            values.put("nom_participant", participant.getNom());
+            values.put("projet_id", participant.getProjetId());
+            values.put("date_arrive",
+                    DateHelper.convertirDateToString(participant.getDateArrive()));
+            values.put("date_depart",
+                    DateHelper.convertirDateToString(participant.getDateDepart()));
+            values.put("contact_phone_id", participant.getContactPhoneId());
+            if (participant.getId() == null) {
+                long insertId = db.insert(TABLE_PARTICIPANT, null, values);
+                participant.definirLId(insertId);
+            } else {
+                db.update(TABLE_PARTICIPANT, values, "id = ?",
+                        new String[]{String.valueOf(participant.getId())});
+            }
+        } finally {
+            db.close();
         }
-        db.close();
         return participant;
     }
 
     // Adding new depense
     public Depense ajouterOuModifierDepense(Depense depense) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("nom_depense", depense.getNomDepense());
-        values.put("montant", depense.getMontant());
-        values.put("type", depense.getTypeDeDepense().name());
-        values.put("date_debut",
-                DateHelper.convertirDateToString(depense.getDateDebut()));
-        values.put("date_fin",
-                DateHelper.convertirDateToString(depense.getDateFin()));
-        values.put("projet_id", String.valueOf(depense.getProjetId()));
-        values.put("participant_id", String.valueOf(depense.getParticipantId()));
-        if (depense.getId() == null) {
-            long insertId = db.insert(TABLE_DEPENSE, null, values);
-            depense.definirLId(insertId);
-        } else {
-            db.update(TABLE_DEPENSE, values, "id = ?",
-                    new String[]{String.valueOf(depense.getId())});
+        try {
+            ContentValues values = new ContentValues();
+            values.put("nom_depense", depense.getNomDepense());
+            values.put("montant", depense.getMontant());
+            values.put("type", depense.getTypeDeDepense().name());
+            values.put("date_debut",
+                    DateHelper.convertirDateToString(depense.getDateDebut()));
+            values.put("date_fin",
+                    DateHelper.convertirDateToString(depense.getDateFin()));
+            values.put("projet_id", String.valueOf(depense.getProjetId()));
+            values.put("participant_id", String.valueOf(depense.getParticipantId()));
+            if (depense.getId() == null) {
+                long insertId = db.insert(TABLE_DEPENSE, null, values);
+                depense.definirLId(insertId);
+            } else {
+                db.update(TABLE_DEPENSE, values, "id = ?",
+                        new String[]{String.valueOf(depense.getId())});
+            }
+        } finally {
+            db.close();
         }
-        db.close();
         return depense;
     }
 
     // Adding new Emprunt
     public Emprunt ajouterOuModifierEmprunt(Emprunt emprunt) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("nom_emprunt", emprunt.getNomEmprunt());
-        values.put("montant", emprunt.getMontant());
-        values.put("date_emprunt",
-                DateHelper.convertirDateToString(emprunt.getDateEmprunt()));
-        values.put("projet_id", String.valueOf(emprunt.getProjetId()));
-        values.put("emprunteur_id", String.valueOf(emprunt.getEmprunteurId()));
-        values.put("participant_id", String.valueOf(emprunt.getParticipantId()));
-        if (emprunt.getId() == null) {
-            long insertId = db.insert(TABLE_EMPRUNT, null, values);
-            emprunt.definirLId(insertId);
-        } else {
-            db.update(TABLE_EMPRUNT, values, "id = ?",
-                    new String[]{String.valueOf(emprunt.getId())});
+        try {
+            ContentValues values = new ContentValues();
+            values.put("nom_emprunt", emprunt.getNomEmprunt());
+            values.put("montant", emprunt.getMontant());
+            values.put("date_emprunt",
+                    DateHelper.convertirDateToString(emprunt.getDateEmprunt()));
+            values.put("projet_id", String.valueOf(emprunt.getProjetId()));
+            values.put("emprunteur_id", String.valueOf(emprunt.getEmprunteurId()));
+            values.put("participant_id", String.valueOf(emprunt.getParticipantId()));
+            if (emprunt.getId() == null) {
+                long insertId = db.insert(TABLE_EMPRUNT, null, values);
+                emprunt.definirLId(insertId);
+            } else {
+                db.update(TABLE_EMPRUNT, values, "id = ?",
+                        new String[]{String.valueOf(emprunt.getId())});
+            }
+        } finally {
+            db.close();
         }
-        db.close();
         return emprunt;
     }
 
     // Getting single projet
     public Projet trouverLeProjet(Integer projetId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_PROJET, new String[]{"id", "nom",
-                "est_courant"}, "id=?",
-                new String[]{String.valueOf(projetId)}, null, null, null,
-                null);
-        Projet projet = null;
-        if (cursor.moveToFirst()) {
-            projet = getProjet(cursor);
+        Projet projet;
+        try {
+            Cursor cursor = db.query(TABLE_PROJET, new String[]{"id", "nom",
+                    "est_courant"}, "id=?",
+                    new String[]{String.valueOf(projetId)}, null, null, null,
+                    null);
+            projet = null;
+            if (cursor.moveToFirst()) {
+                projet = getProjet(cursor);
+            }
+        } finally {
+            db.close();
         }
-        db.close();
         return projet;
     }
 
     public Participant trouverLeParticipant(Integer idParticipant) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_PARTICIPANT, new String[]{"id",
-                "nom_participant", "date_arrive", "date_depart", "projet_id", "contact_phone_id"},
-                "id=?", new String[]{String.valueOf(idParticipant)}, null,
-                null, null, null);
-        Participant participant = null;
-        if (cursor.moveToFirst()) {
-            participant = getParticipant(cursor);
+        Participant participant;
+        try {
+            Cursor cursor = db.query(TABLE_PARTICIPANT, new String[]{"id",
+                    "nom_participant", "date_arrive", "date_depart", "projet_id", "contact_phone_id"},
+                    "id=?", new String[]{String.valueOf(idParticipant)}, null,
+                    null, null, null);
+            participant = null;
+            if (cursor.moveToFirst()) {
+                participant = getParticipant(cursor);
+            }
+        } finally {
+            db.close();
         }
-        db.close();
         return participant;
     }
 
@@ -386,6 +410,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return count;
     }
 
+    public int getDepensesCount(Integer projetId, Integer participantId) {
+        String countQuery = "SELECT  * FROM " + TABLE_DEPENSE
+                + " WHERE projet_id=" + projetId + " and participant_id=" + participantId;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
+    public int getEmpruntsCount(Integer projetId, Integer participantId) {
+        String countQuery = "SELECT  * FROM " + TABLE_EMPRUNT
+                + " WHERE projet_id=" + projetId + " and (participant_id=" + participantId + " or emprunteur_id=" + participantId + ")";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
+
     public List<Participant> getAllParticipant(Integer projetId) {
         List<Participant> participantList = new ArrayList<Participant>();
         // String selectQuery = "SELECT  * FROM " + TABLE_PARTICIPANT;
@@ -533,6 +577,5 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
         return projetList;
     }
-
 
 }

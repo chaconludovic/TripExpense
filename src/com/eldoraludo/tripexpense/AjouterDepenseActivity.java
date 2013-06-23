@@ -1,16 +1,8 @@
 package com.eldoraludo.tripexpense;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import org.joda.time.DateTime;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +21,12 @@ import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.entite.TypeDeDepense;
 import com.eldoraludo.tripexpense.util.DateHelper;
 import com.google.common.base.Preconditions;
+
+import org.joda.time.DateTime;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class AjouterDepenseActivity extends Activity {
     private Integer idDepense;
@@ -70,7 +68,12 @@ public class AjouterDepenseActivity extends Activity {
         ajouterOuModifierDepenseButton = (Button) findViewById(R.id.ajouterOuModifierDepenseButton);
 
         listeParticipant = (Spinner) findViewById(R.id.listeParticipant);
-        List<Participant> list = databaseHandler.getAllParticipant(idProjet);
+        List<Participant> list = new ArrayList<Participant>();
+        try {
+            list = databaseHandler.getAllParticipant(idProjet);
+        } catch (Exception e) {
+            Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
         ArrayAdapter<Participant> dataAdapter = new ArrayAdapter<Participant>(
                 this, android.R.layout.simple_spinner_item, list);
@@ -78,24 +81,30 @@ public class AjouterDepenseActivity extends Activity {
                 .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         listeParticipant.setAdapter(dataAdapter);
 
+        Depense depense = null;
         if (idDepense != -1) {
-            Depense depense = databaseHandler.trouverLaDepense(idDepense);
-            Preconditions.checkNotNull(depense,
-                    "La dépense n'a pas été trouvée");
-            nomDepenseText.setText(depense.getNomDepense());
-            montantText.setText(String.valueOf(depense.getMontant()));
-            anneeDebutDepense = depense.getDateDebut().getYear();
-            moisDebutDepense = depense.getDateDebut().getMonthOfYear();
-            jourDebutDepense = depense.getDateDebut().getDayOfMonth();
+            try {
+                depense = databaseHandler.trouverLaDepense(idDepense);
+                Preconditions.checkNotNull(depense,
+                        "La dépense n'a pas été trouvée");
+                nomDepenseText.setText(depense.getNomDepense());
+                montantText.setText(String.valueOf(depense.getMontant()));
+                anneeDebutDepense = depense.getDateDebut().getYear();
+                moisDebutDepense = depense.getDateDebut().getMonthOfYear();
+                jourDebutDepense = depense.getDateDebut().getDayOfMonth();
 
-            anneeFinDepense = depense.getDateFin().getYear();
-            moisFinDepense = depense.getDateFin().getMonthOfYear();
-            jourFinDepense = depense.getDateFin().getDayOfMonth();
-            Participant participant = databaseHandler
-                    .trouverLeParticipant(depense.getParticipantId());
-            int pos = list.indexOf(participant);
-            listeParticipant.setSelection(pos);
-        } else {
+                anneeFinDepense = depense.getDateFin().getYear();
+                moisFinDepense = depense.getDateFin().getMonthOfYear();
+                jourFinDepense = depense.getDateFin().getDayOfMonth();
+                Participant participant = databaseHandler
+                        .trouverLeParticipant(depense.getParticipantId());
+                int pos = list.indexOf(participant);
+                listeParticipant.setSelection(pos);
+            } catch (Exception e) {
+                Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (depense == null) {
             final Calendar c = Calendar.getInstance();
             anneeDebutDepense = c.get(Calendar.YEAR);
             moisDebutDepense = c.get(Calendar.MONTH);
@@ -111,37 +120,41 @@ public class AjouterDepenseActivity extends Activity {
     }
 
     public void onClick(View view) {
-        // If add button was clicked
-        if (ajouterOuModifierDepenseButton.isPressed()) {
-            // Get entered text
-            String nomDepenseTextValue = nomDepenseText.getText().toString();
-            if (nomDepenseTextValue == null || nomDepenseTextValue.isEmpty()) {
-                Toast.makeText(this, "Il faut préciser un nom de dépense", Toast.LENGTH_SHORT).show();
-                return;
+        try {
+            // If add button was clicked
+            if (ajouterOuModifierDepenseButton.isPressed()) {
+                // Get entered text
+                String nomDepenseTextValue = nomDepenseText.getText().toString();
+                if (nomDepenseTextValue == null || nomDepenseTextValue.isEmpty()) {
+                    Toast.makeText(this, "Il faut préciser un nom de dépense", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String montantDepenseTextValue = montantText.getText().toString();
+                if (montantDepenseTextValue == null || montantDepenseTextValue.isEmpty()) {
+                    Toast.makeText(this, "Il faut préciser un montant", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Participant participantSelectionne = (Participant) listeParticipant
+                        .getSelectedItem();
+                DateTime dateDebut = DateHelper.convertirIntsToDate(
+                        jourDebutDepense, moisDebutDepense, anneeDebutDepense);
+                DateTime dateFin = DateHelper.convertirIntsToDate(jourFinDepense,
+                        moisFinDepense, anneeFinDepense);
+                if (dateDebut.isAfter(dateFin)) {
+                    // showDialog(ERROR_DIALOG_DATE_INCOHERENTE);
+                    Toast.makeText(this, "La date de début doit être avant la date de fin", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                nomDepenseText.setText("");
+                montantText.setText("");
+                this.ajouterDepense(nomDepenseTextValue, montantDepenseTextValue,
+                        participantSelectionne.getId(), dateDebut, dateFin);
+                Intent i = new Intent();
+                setResult(RESULT_OK, i);
+                super.finish();
             }
-            String montantDepenseTextValue = montantText.getText().toString();
-            if (montantDepenseTextValue == null || montantDepenseTextValue.isEmpty()) {
-                Toast.makeText(this, "Il faut préciser un montant", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Participant participantSelectionne = (Participant) listeParticipant
-                    .getSelectedItem();
-            DateTime dateDebut = DateHelper.convertirIntsToDate(
-                    jourDebutDepense, moisDebutDepense, anneeDebutDepense);
-            DateTime dateFin = DateHelper.convertirIntsToDate(jourFinDepense,
-                    moisFinDepense, anneeFinDepense);
-            if (dateDebut.isAfter(dateFin)) {
-                // showDialog(ERROR_DIALOG_DATE_INCOHERENTE);
-                Toast.makeText(this, "La date de début doit être avant la date de fin", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            nomDepenseText.setText("");
-            montantText.setText("");
-            this.ajouterDepense(nomDepenseTextValue, montantDepenseTextValue,
-                    participantSelectionne.getId(), dateDebut, dateFin);
-            Intent i = new Intent();
-            setResult(RESULT_OK, i);
-            super.finish();
+        } catch (Exception e) {
+            Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

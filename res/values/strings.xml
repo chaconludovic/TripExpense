@@ -41,4 +41,7 @@
     <string name="title_activity_ajouter_emprunt">Ajouter Emprunt</string>
     <string name="button_ajouterNouvelEmprunt">Ajouter emprunt</string>
 
+    <color name="text_color">#31D1F1</color>
+    <color name="white">#ffffff</color>
+    <string name="open">Open</string>
 </resources>

@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 
 import org.joda.time.DateTime;
 
-public class Emprunt extends BaseEntity {
+public class Emprunt extends BaseEntity implements Comparable<Emprunt> {
     private Double montant;
     private String nomEmprunt;
     private DateTime dateEmprunt;
@@ -67,6 +67,11 @@ public class Emprunt extends BaseEntity {
 
     public static Builder newBuilder() {
         return new Builder();
+    }
+
+    @Override
+    public int compareTo(Emprunt emprunt) {
+        return this.dateEmprunt.compareTo(emprunt.getDateEmprunt());
     }
 
     public static class Builder {

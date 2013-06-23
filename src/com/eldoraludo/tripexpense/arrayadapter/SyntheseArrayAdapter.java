@@ -50,7 +50,12 @@ public class SyntheseArrayAdapter extends ArrayAdapter<SyntheseDTO> {
     }
 
     private void definirPhoto(Participant participant, ImageView photoImage) {
-        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.valueOf(participant.getContactPhoneId()));
+        String contactPhoneId = participant.getContactPhoneId();
+        if (contactPhoneId == null) {
+            photoImage.setVisibility(View.INVISIBLE);
+            return;
+        }
+        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, Long.valueOf(contactPhoneId));
         InputStream inputStream = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(),
                 contactUri);
         if (inputStream != null) {

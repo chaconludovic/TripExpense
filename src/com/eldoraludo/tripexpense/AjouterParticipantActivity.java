@@ -1,16 +1,13 @@
 package com.eldoraludo.tripexpense;
 
-import java.util.Calendar;
-
-import android.content.ContentResolver;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.ContactsContract;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,6 +23,8 @@ import com.eldoraludo.tripexpense.util.DateHelper;
 import com.google.common.base.Preconditions;
 
 import org.joda.time.DateTime;
+
+import java.util.Calendar;
 
 public class AjouterParticipantActivity extends Activity {
     private static final int CONTACT_PICKER_RESULT = 0;
@@ -68,25 +67,31 @@ public class AjouterParticipantActivity extends Activity {
         ajouterOuModifierParticipantButton = (Button) findViewById(R.id.ajouterOuModifierParticipantButton);
         boutonRecupererUnContact = (Button) findViewById(R.id.btnGetContact);
 
+        Participant participant = null;
         if (idParticipant != -1) {
-            Participant participant = databaseHandler
-                    .trouverLeParticipant(idParticipant);
-            Preconditions.checkNotNull(participant,
-                    "Le participant n'a pas été trouvé");
-            nomParticipantText.setText(participant.getNom());
-            anneeArrive = participant.getDateArrive().getYear();
-            moisArrive = participant.getDateArrive().getMonthOfYear();
-            jourArrive = participant.getDateArrive().getDayOfMonth();
+            try {
+                participant = databaseHandler
+                        .trouverLeParticipant(idParticipant);
+                Preconditions.checkNotNull(participant,
+                        "Le participant n'a pas été trouvé");
+                nomParticipantText.setText(participant.getNom());
+                anneeArrive = participant.getDateArrive().getYear();
+                moisArrive = participant.getDateArrive().getMonthOfYear();
+                jourArrive = participant.getDateArrive().getDayOfMonth();
 
-            anneeDepart = participant.getDateDepart().getYear();
-            moisDepart = participant.getDateDepart().getMonthOfYear();
-            jourDepart = participant.getDateDepart().getDayOfMonth();
+                anneeDepart = participant.getDateDepart().getYear();
+                moisDepart = participant.getDateDepart().getMonthOfYear();
+                jourDepart = participant.getDateDepart().getDayOfMonth();
 
-            if (participant.getContactPhoneId() != null) {
-                idContactRecupereDepuisListeContact = participant.getContactPhoneId();
-                nomRecupererDepuisListeContact = participant.getNom();
+                if (participant.getContactPhoneId() != null) {
+                    idContactRecupereDepuisListeContact = participant.getContactPhoneId();
+                    nomRecupererDepuisListeContact = participant.getNom();
+                }
+            } catch (Exception e) {
+                Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        } else {
+        }
+        if (participant == null) {
             final Calendar c = Calendar.getInstance();
             anneeArrive = c.get(Calendar.YEAR);
             moisArrive = c.get(Calendar.MONTH);
@@ -102,51 +107,55 @@ public class AjouterParticipantActivity extends Activity {
     }
 
     public void onClick(View view) {
-        // If add button was clicked
-        if (ajouterOuModifierParticipantButton.isPressed()) {
-            // Get entered text
-            String participantTextValue = nomParticipantText.getText()
-                    .toString();
-            if (participantTextValue == null || participantTextValue.isEmpty()) {
-                Toast.makeText(this, "Il faut préciser un nom de participant", Toast.LENGTH_SHORT).show();
-                return;
+        try {
+            // If add button was clicked
+            if (ajouterOuModifierParticipantButton.isPressed()) {
+                // Get entered text
+                String participantTextValue = nomParticipantText.getText()
+                        .toString();
+                if (participantTextValue == null || participantTextValue.isEmpty()) {
+                    Toast.makeText(this, "Il faut préciser un nom de participant", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Participant participant = databaseHandler.trouverLeParticipant(participantTextValue);
+                if (participant != null && (idParticipant == -1 || !idParticipant.equals(participant.getId()))) {
+                    Toast.makeText(this, "Le nom du participant " + participantTextValue + " existe déjà", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                DateTime dateArrive = DateHelper.convertirIntsToDate(jourArrive,
+                        moisArrive, anneeArrive);
+                DateTime dateDepart = DateHelper.convertirIntsToDate(jourDepart,
+                        moisDepart, anneeDepart);
+                if (dateArrive.isAfter(dateDepart)) {
+                    Toast.makeText(this, "La date d'arrivée doit être avant la date de départ du participant", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                nomParticipantText.setText("");
+                // Add text to the database
+                Participant.Builder participantBuilder = Participant
+                        .newBuilder()
+                        .withId(idParticipant == -1 ? null : idParticipant)
+                        .withNom(participantTextValue)
+                        .withDateArrive(
+                                dateArrive)
+                        .withDateDepart(
+                                dateDepart)
+                        .withProjetId(idProjet);
+                if (participantTextValue.equals(nomRecupererDepuisListeContact)) {
+                    participantBuilder.withContactPhoneId(idContactRecupereDepuisListeContact);
+                } else {
+                    participantBuilder.withContactPhoneId(null);
+                }
+                databaseHandler.ajouterOuModifierParticipant(participantBuilder.build());
+                Intent i = new Intent();
+                setResult(RESULT_OK, i);
+                super.finish();
+            } else if (boutonRecupererUnContact.isPressed()) {
+                Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
             }
-            Participant participant = databaseHandler.trouverLeParticipant(participantTextValue);
-            if (participant != null && (idParticipant == -1 || !idParticipant.equals(participant.getId()))) {
-                Toast.makeText(this, "Le nom du participant " + participantTextValue + " existe déjà", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            DateTime dateArrive = DateHelper.convertirIntsToDate(jourArrive,
-                    moisArrive, anneeArrive);
-            DateTime dateDepart = DateHelper.convertirIntsToDate(jourDepart,
-                    moisDepart, anneeDepart);
-            if (dateArrive.isAfter(dateDepart)) {
-                Toast.makeText(this, "La date d'arrivée doit être avant la date de départ du participant", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            nomParticipantText.setText("");
-            // Add text to the database
-            Participant.Builder participantBuilder = Participant
-                    .newBuilder()
-                    .withId(idParticipant == -1 ? null : idParticipant)
-                    .withNom(participantTextValue)
-                    .withDateArrive(
-                            dateArrive)
-                    .withDateDepart(
-                            dateDepart)
-                    .withProjetId(idProjet);
-            if (participantTextValue.equals(nomRecupererDepuisListeContact)) {
-                participantBuilder.withContactPhoneId(idContactRecupereDepuisListeContact);
-            } else {
-                participantBuilder.withContactPhoneId(null);
-            }
-            databaseHandler.ajouterOuModifierParticipant(participantBuilder.build());
-            Intent i = new Intent();
-            setResult(RESULT_OK, i);
-            super.finish();
-        } else if (boutonRecupererUnContact.isPressed()) {
-            Intent contactPickerIntent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-            startActivityForResult(contactPickerIntent, CONTACT_PICKER_RESULT);
+        } catch (Exception e) {
+            Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
     }

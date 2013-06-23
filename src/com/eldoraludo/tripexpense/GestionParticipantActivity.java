@@ -1,7 +1,5 @@
 package com.eldoraludo.tripexpense;
 
-import java.util.List;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,9 +19,11 @@ import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.arrayadapter.ParticipantArrayAdapter;
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
-import com.eldoraludo.tripexpense.entite.Depense;
 import com.eldoraludo.tripexpense.entite.Participant;
 import com.google.common.base.Preconditions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GestionParticipantActivity extends ListActivity {
     protected static final String ID_PARTICIPANT = "id_participant";
@@ -47,7 +47,12 @@ public class GestionParticipantActivity extends ListActivity {
         Preconditions.checkState(!idProjet.equals(-1),
                 "L'id du projet doit être définit");
 
-        List<Participant> values = databaseHandler.getAllParticipant(idProjet);
+        List<Participant> values=new ArrayList<Participant>();
+        try {
+            values = databaseHandler.getAllParticipant(idProjet);
+        } catch (Exception e) {
+            Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
         // Binding resources Array to ListAdapter
         // this.setListAdapter(new ArrayAdapter<Participant>(this,
         // android.R.layout.simple_list_item_1, values));
@@ -97,32 +102,41 @@ public class GestionParticipantActivity extends ListActivity {
         switch (aItem.getItemId()) {
 
             case CONTEXTMENU_DELETEITEM:
-                ArrayAdapter<Participant> adapter = (ArrayAdapter<Participant>) getListAdapter();
+                try {
+                    ArrayAdapter<Participant> adapter = (ArrayAdapter<Participant>) getListAdapter();
 
 			/* Get the selected item out of the Adapter by its position. */
 
-                Participant participantASupprimer = (Participant) lv.getAdapter()
-                        .getItem(menuInfo.position);
-                List<Depense> depenses = databaseHandler.trouverToutesLesDepensesDuParticipant(idProjet, participantASupprimer.getId());
-                if (depenses != null) {
-                    Toast.makeText(this, "Il faut d'abord supprimer les dépenses du participant " + participantASupprimer.getNom(), Toast.LENGTH_LONG).show();
-                    return true; /* true means: "we handled the event". */
-                }
-                databaseHandler.deleteParticipant(participantASupprimer);
+                    Participant participantASupprimer = (Participant) lv.getAdapter()
+                            .getItem(menuInfo.position);
+                    int depensesCount = databaseHandler.getDepensesCount(idProjet, participantASupprimer.getId());
+                    int empruntsCount = databaseHandler.getEmpruntsCount(idProjet, participantASupprimer.getId());
+                    if (depensesCount != 0 || empruntsCount != 0) {
+                        Toast.makeText(this, "Il faut d'abord supprimer les dépenses et les emprunts du participant " + participantASupprimer.getNom(), Toast.LENGTH_LONG).show();
+                        return true; /* true means: "we handled the event". */
+                    }
+                    databaseHandler.deleteParticipant(participantASupprimer);
             /* Remove it from the list. */
-                adapter.remove(participantASupprimer);
-                adapter.notifyDataSetChanged();
-                invalidateOptionsMenu();
+                    adapter.remove(participantASupprimer);
+                    adapter.notifyDataSetChanged();
+                    invalidateOptionsMenu();
+                } catch (Exception e) {
+                    Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
                 return true; /* true means: "we handled the event". */
             case CONTEXTMENU_MODIFYITEM:
-                Participant projetAModifier = (Participant) lv.getAdapter()
-                        .getItem(menuInfo.position);
-                Intent i = new Intent(getApplicationContext(),
-                        AjouterParticipantActivity.class);
-                // sending data to new activity
-                i.putExtra(ID_PARTICIPANT, projetAModifier.getId());
-                i.putExtra(GestionProjetActivity.ID_PROJET_COURANT, idProjet);
-                startActivityForResult(i, REQUEST_AJOUTER_PARTICIPANT);
+                try {
+                    Participant projetAModifier = (Participant) lv.getAdapter()
+                            .getItem(menuInfo.position);
+                    Intent i = new Intent(getApplicationContext(),
+                            AjouterParticipantActivity.class);
+                    // sending data to new activity
+                    i.putExtra(ID_PARTICIPANT, projetAModifier.getId());
+                    i.putExtra(GestionProjetActivity.ID_PROJET_COURANT, idProjet);
+                    startActivityForResult(i, REQUEST_AJOUTER_PARTICIPANT);
+                } catch (Exception e) {
+                    Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
                 return true; /* true means: "we handled the event". */
         }
 
@@ -150,11 +164,15 @@ public class GestionParticipantActivity extends ListActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.gestion_participant, menu);
-        if (databaseHandler.getParticipantsCount(idProjet) == 0) {
-            MenuItem menuDepense = menu.findItem(R.id.gestion_participant_depense_menu);
-            menuDepense.setVisible(false);
-            MenuItem menuEmprunt = menu.findItem(R.id.gestion_participant_emprunt_menu);
-            menuEmprunt.setVisible(false);
+        try {
+            if (databaseHandler.getParticipantsCount(idProjet) == 0) {
+                MenuItem menuDepense = menu.findItem(R.id.gestion_participant_depense_menu);
+                menuDepense.setVisible(false);
+                MenuItem menuEmprunt = menu.findItem(R.id.gestion_participant_emprunt_menu);
+                menuEmprunt.setVisible(false);
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         return true;
     }
@@ -163,12 +181,17 @@ public class GestionParticipantActivity extends ListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_AJOUTER_PARTICIPANT) {
-                List<Participant> values = databaseHandler
-                        .getAllParticipant(idProjet);
-                ParticipantArrayAdapter adapter = new ParticipantArrayAdapter(
-                        this, values);
-                this.setListAdapter(adapter);
-                invalidateOptionsMenu();
+                List<Participant> values=new ArrayList<Participant>();
+                try {
+                    values = databaseHandler
+                            .getAllParticipant(idProjet);
+                    ParticipantArrayAdapter adapter = new ParticipantArrayAdapter(
+                            this, values);
+                    this.setListAdapter(adapter);
+                    invalidateOptionsMenu();
+                } catch (Exception e) {
+                    Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
@@ -182,6 +205,7 @@ public class GestionParticipantActivity extends ListActivity {
                 pageSynthese.putExtra(GestionProjetActivity.ID_PROJET_COURANT,
                         idProjet);
                 startActivity(pageSynthese);
+                super.finish();
                 return true;
             case R.id.gestion_participant_depense_menu:
                 Intent pageDepense = new Intent(getApplicationContext(),
@@ -189,6 +213,7 @@ public class GestionParticipantActivity extends ListActivity {
                 pageDepense.putExtra(GestionProjetActivity.ID_PROJET_COURANT,
                         idProjet);
                 startActivity(pageDepense);
+                super.finish();
                 return true;
             case R.id.gestion_participant_emprunt_menu:
                 Intent pageEmprunt = new Intent(getApplicationContext(),
@@ -196,6 +221,7 @@ public class GestionParticipantActivity extends ListActivity {
                 pageEmprunt.putExtra(GestionProjetActivity.ID_PROJET_COURANT,
                         idProjet);
                 startActivity(pageEmprunt);
+                super.finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
