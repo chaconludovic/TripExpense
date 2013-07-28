@@ -122,7 +122,7 @@ public class AjouterParticipantActivity extends Activity {
                     Toast.makeText(this, "Il faut préciser un nom de participant", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Participant participant = databaseHandler.trouverLeParticipant(participantTextValue);
+                Participant participant = databaseHandler.trouverLeParticipant(idProjet, participantTextValue);
                 if (participant != null && (idParticipant == -1 || !idParticipant.equals(participant.getId()))) {
                     Toast.makeText(this, "Le nom du participant " + participantTextValue + " existe déjà", Toast.LENGTH_SHORT).show();
                     return;

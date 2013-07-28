@@ -233,11 +233,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return participant;
     }
 
-    public Participant trouverLeParticipant(String nom) {
+    public Participant trouverLeParticipant(Integer idProjet, String nom) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_PARTICIPANT, new String[]{"id",
                 "nom_participant", "date_arrive", "date_depart", "projet_id", "contact_phone_id"},
-                "nom_participant=?", new String[]{nom}, null,
+                "nom_participant=? and projet_id = ?", new String[]{nom,String.valueOf(idProjet)}, null,
                 null, null, null);
         Participant participant = null;
         if (cursor.moveToFirst()) {
