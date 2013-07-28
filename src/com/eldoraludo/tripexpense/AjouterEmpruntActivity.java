@@ -20,6 +20,8 @@ import com.eldoraludo.tripexpense.entite.Emprunt;
 import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.util.DateHelper;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import org.joda.time.DateTime;
 
@@ -109,7 +111,7 @@ public class AjouterEmpruntActivity extends Activity {
         if (emprunt == null) {
             final Calendar c = Calendar.getInstance();
             anneeEmprunt = c.get(Calendar.YEAR);
-            moisEmprunt = c.get(Calendar.MONTH);
+            moisEmprunt = c.get(Calendar.MONTH) + 1;
             jourEmprunt = c.get(Calendar.DAY_OF_MONTH);
         }
 
@@ -144,7 +146,10 @@ public class AjouterEmpruntActivity extends Activity {
 
                 DateTime dateEmprunt = DateHelper.convertirIntsToDate(
                         jourEmprunt, moisEmprunt, anneeEmprunt);
-
+                // ecart date contient participant
+                if (verificationPresenceParticipant(dateEmprunt)) {
+                    return;
+                }
 
                 nomEmpruntText.setText("");
                 montantText.setText("");
@@ -157,6 +162,21 @@ public class AjouterEmpruntActivity extends Activity {
         } catch (Exception e) {
             Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private boolean verificationPresenceParticipant(final DateTime dateEmprunt) {
+        List<Participant> allParticipant = databaseHandler
+                .getAllParticipant(idProjet);
+        if (!Iterables.any(allParticipant, new Predicate<Participant>() {
+            @Override
+            public boolean apply(Participant participant) {
+                return !participant.getDateArrive().isAfter(dateEmprunt) && !dateEmprunt.isAfter(participant.getDateDepart());
+            }
+        })) {
+            Toast.makeText(this, "Aucun participant n'a été trouvé pour la date " + dateEmprunt.toString("dd/MM/YYYY"), Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
     }
 
     private void ajouterEmprunt(String nomEmpruntTextValue,

@@ -1,5 +1,14 @@
 package com.eldoraludo.tripexpense.calculateur;
 
+import com.eldoraludo.tripexpense.dto.SyntheseDTO;
+import com.eldoraludo.tripexpense.entite.Depense;
+import com.eldoraludo.tripexpense.entite.Emprunt;
+import com.eldoraludo.tripexpense.entite.Participant;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,17 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import org.joda.time.DateTime;
-
-import com.eldoraludo.tripexpense.dto.SyntheseDTO;
-import com.eldoraludo.tripexpense.entite.Depense;
-import com.eldoraludo.tripexpense.entite.Emprunt;
-import com.eldoraludo.tripexpense.entite.Participant;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 public class SyntheseCalculateur implements Calculateur<List<SyntheseDTO>> {
 
@@ -35,7 +33,7 @@ public class SyntheseCalculateur implements Calculateur<List<SyntheseDTO>> {
     }
 
     @Override
-    public List<SyntheseDTO> run() {
+    public List<SyntheseDTO> getResultat() {
         Map<DateTime, Set<Participant>> dateParticipantMap = this
                 .buildDateParticipantMap(participants);
 
@@ -367,7 +365,10 @@ public class SyntheseCalculateur implements Calculateur<List<SyntheseDTO>> {
                 }
                 dateCourante = dateCourante.plusDays(1);
             }
-
+            Preconditions.checkState(nombreDeParticipantPourLaDepense != 0,
+                    "le Nombre de participant entre la date de début de dépense "
+                            + dateDebut.toString() + " et la date de fin de dépense "
+                            + dateFin.toString() + " est egual à zéro");
             Map<Participant, Double> mapPart = new HashMap<Participant, Double>();
             Double montantParPart = (double) Math.round(depense.getMontant()
                     .longValue()

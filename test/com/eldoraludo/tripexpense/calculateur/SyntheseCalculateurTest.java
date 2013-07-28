@@ -7,8 +7,8 @@ import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.entite.TypeDeDepense;
 
 import org.joda.time.DateTime;
-import org.junit.*;
-
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class SyntheseCalculateurTest {
         List<Participant> participants = new ArrayList<Participant>();
         SyntheseCalculateur syntheseCalculateur = new SyntheseCalculateur(
                 emprunts, depenses, participants);
-        List<SyntheseDTO> synthese = syntheseCalculateur.run();
+        List<SyntheseDTO> synthese = syntheseCalculateur.getResultat();
         Assert.assertEquals(0, synthese.size());
     }
 
@@ -54,7 +54,7 @@ public class SyntheseCalculateurTest {
         depenses.add(depense);
         SyntheseCalculateur syntheseCalculateur = new SyntheseCalculateur(
                 null, depenses, participants);
-        List<SyntheseDTO> synthese = syntheseCalculateur.run();
+        List<SyntheseDTO> synthese = syntheseCalculateur.getResultat();
         Assert.assertEquals(0, synthese.size());
     }
 
@@ -81,7 +81,7 @@ public class SyntheseCalculateurTest {
         depenses.add(depense);
         SyntheseCalculateur syntheseCalculateur = new SyntheseCalculateur(
                 null, depenses, participants);
-        List<SyntheseDTO> synthese = syntheseCalculateur.run();
+        List<SyntheseDTO> synthese = syntheseCalculateur.getResultat();
         Assert.assertEquals(1, synthese.size());
         SyntheseDTO syntheseDTO = synthese.get(0);
         Assert.assertEquals(participant2.getNom(), syntheseDTO.getParticipant()

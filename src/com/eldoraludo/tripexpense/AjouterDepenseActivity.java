@@ -21,6 +21,8 @@ import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.entite.TypeDeDepense;
 import com.eldoraludo.tripexpense.util.DateHelper;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import org.joda.time.DateTime;
 
@@ -107,10 +109,10 @@ public class AjouterDepenseActivity extends Activity {
         if (depense == null) {
             final Calendar c = Calendar.getInstance();
             anneeDebutDepense = c.get(Calendar.YEAR);
-            moisDebutDepense = c.get(Calendar.MONTH);
+            moisDebutDepense = c.get(Calendar.MONTH) + 1;
             jourDebutDepense = c.get(Calendar.DAY_OF_MONTH);
             anneeFinDepense = c.get(Calendar.YEAR);
-            moisFinDepense = c.get(Calendar.MONTH);
+            moisFinDepense = c.get(Calendar.MONTH) + 1;
             jourFinDepense = c.get(Calendar.DAY_OF_MONTH) + 1;
         }
 
@@ -134,8 +136,8 @@ public class AjouterDepenseActivity extends Activity {
                     Toast.makeText(this, "Il faut préciser un montant", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Participant participantSelectionne = (Participant) listeParticipant
-                        .getSelectedItem();
+                // verification des dates
+                // date de debut avec date de fin
                 DateTime dateDebut = DateHelper.convertirIntsToDate(
                         jourDebutDepense, moisDebutDepense, anneeDebutDepense);
                 DateTime dateFin = DateHelper.convertirIntsToDate(jourFinDepense,
@@ -145,8 +147,15 @@ public class AjouterDepenseActivity extends Activity {
                     Toast.makeText(this, "La date de début doit être avant la date de fin", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                // ecart date contient participant
+                if (verificationPresenceParticipant(dateDebut, dateFin)) {
+                    return;
+                }
+
                 nomDepenseText.setText("");
                 montantText.setText("");
+                Participant participantSelectionne = (Participant) listeParticipant
+                        .getSelectedItem();
                 this.ajouterDepense(nomDepenseTextValue, montantDepenseTextValue,
                         participantSelectionne.getId(), dateDebut, dateFin);
                 Intent i = new Intent();
@@ -156,6 +165,26 @@ public class AjouterDepenseActivity extends Activity {
         } catch (Exception e) {
             Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private boolean verificationPresenceParticipant(DateTime dateDebut, DateTime dateFin) {
+        List<Participant> allParticipant = databaseHandler
+                .getAllParticipant(idProjet);
+        DateTime dateCourante = dateDebut;
+        while (!dateCourante.isAfter(dateFin)) {
+            final DateTime finalDateCourante = dateCourante;
+            if (!Iterables.any(allParticipant, new Predicate<Participant>() {
+                @Override
+                public boolean apply(Participant participant) {
+                    return !participant.getDateArrive().isAfter(finalDateCourante) && !finalDateCourante.isAfter(participant.getDateDepart());
+                }
+            })) {
+                Toast.makeText(this, "Aucun participant n'a été trouvé pour la date " + finalDateCourante.toString("dd/MM/YYYY"), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            dateCourante = dateCourante.plusDays(1);
+        }
+        return false;
     }
 
     private void ajouterDepense(String nomDepenseTextValue,

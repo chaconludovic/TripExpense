@@ -106,7 +106,13 @@ public class SyntheseActivity extends ListActivity implements SensorEventListene
             List<Participant> participants = databaseHandler
                     .getAllParticipant(idProjet);
             List<Emprunt> emprunts = databaseHandler.getAllEmprunt(idProjet);
-            return new SyntheseCalculateur(emprunts, depenses, participants).run();
+            SyntheseCalculateur syntheseCalculateur = new SyntheseCalculateur(emprunts, depenses, participants);
+            try {
+                return syntheseCalculateur.getResultat();
+            } catch (Throwable e) {
+                Log.e(TAG, e.getMessage());
+            }
+            return new ArrayList<SyntheseDTO>();
         }
     }
 

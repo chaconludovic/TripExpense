@@ -18,15 +18,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
+import com.eldoraludo.tripexpense.entite.Depense;
 import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.util.DateHelper;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import org.joda.time.DateTime;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class AjouterParticipantActivity extends Activity {
+    private String TAG = AjouterParticipantActivity.class.getSimpleName();
     private static final int CONTACT_PICKER_RESULT = 0;
     private Integer idParticipant;
     private Integer idProjet;
@@ -68,7 +73,7 @@ public class AjouterParticipantActivity extends Activity {
         boutonRecupererUnContact = (Button) findViewById(R.id.btnGetContact);
 
         Participant participant = null;
-        if (idParticipant != -1) {
+        if (estEnModification()) {
             try {
                 participant = databaseHandler
                         .trouverLeParticipant(idParticipant);
@@ -94,10 +99,10 @@ public class AjouterParticipantActivity extends Activity {
         if (participant == null) {
             final Calendar c = Calendar.getInstance();
             anneeArrive = c.get(Calendar.YEAR);
-            moisArrive = c.get(Calendar.MONTH);
+            moisArrive = c.get(Calendar.MONTH) + 1;
             jourArrive = c.get(Calendar.DAY_OF_MONTH);
             anneeDepart = c.get(Calendar.YEAR);
-            moisDepart = c.get(Calendar.MONTH);
+            moisDepart = c.get(Calendar.MONTH) + 1;
             jourDepart = c.get(Calendar.DAY_OF_MONTH) + 1;
         }
 
@@ -130,6 +135,15 @@ public class AjouterParticipantActivity extends Activity {
                     Toast.makeText(this, "La date d'arrivée doit être avant la date de départ du participant", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (estEnModification()) {
+                    try {
+                        if (verificationPresenceDepense(dateArrive, dateDepart)) {
+                            return;
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
                 nomParticipantText.setText("");
                 // Add text to the database
                 Participant.Builder participantBuilder = Participant
@@ -158,6 +172,49 @@ public class AjouterParticipantActivity extends Activity {
             Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private boolean estEnModification() {
+        return idParticipant != -1;
+    }
+
+    private boolean verificationPresenceDepense(DateTime dateArriveDuParticipant, DateTime dateDepartDuParticipant) {
+        List<Depense> depenses = databaseHandler
+                .getAllDepense(idProjet);
+        for (Depense depense : depenses) {
+            if (verificationPresenceParticipant(depense.getDateDebut(), depense.getDateFin(), dateArriveDuParticipant, dateDepartDuParticipant)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean verificationPresenceParticipant(DateTime dateDebutDepense, DateTime dateFinDepense
+            , final DateTime dateArriveDuParticipant, final DateTime dateDepartDuParticipant) {
+        List<Participant> allParticipant = databaseHandler
+                .getAllParticipant(idProjet);
+        DateTime dateCourante = dateDebutDepense;
+        while (!dateCourante.isAfter(dateFinDepense)) {
+            final DateTime finalDateCourante = dateCourante;
+            boolean estAucunParticipantPourLaDepense = !Iterables.any(allParticipant, new Predicate<Participant>() {
+                @Override
+                public boolean apply(Participant participant) {
+                    if (participant.getId().equals(idParticipant)) {
+                        boolean estParticipantPourLaDepense = !dateArriveDuParticipant.isAfter(finalDateCourante) && !finalDateCourante.isAfter(dateDepartDuParticipant);
+                        return estParticipantPourLaDepense;
+                    } else {
+                        return !participant.getDateArrive().isAfter(finalDateCourante) && !finalDateCourante.isAfter(participant.getDateDepart());
+
+                    }
+                }
+            });
+            if (estAucunParticipantPourLaDepense) {
+                Toast.makeText(this, "Aucun participant n'a été trouvé pour la date " + finalDateCourante.toString("dd/MM/YYYY"), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            dateCourante = dateCourante.plusDays(1);
+        }
+        return false;
     }
 
     // display current date
