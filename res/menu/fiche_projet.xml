@@ -15,6 +15,13 @@
             android:title="@string/modifier_projet_menu"/>
 
     <item
+            android:id="@+id/fiche_projet_envoyer_email_menu"
+            android:orderInCategory="100"
+            android:icon="@drawable/ic_action_content_email"
+            android:showAsAction="ifRoom|withText"
+            android:title="@string/modifier_projet_menu"/>
+
+    <item
             android:id="@+id/fiche_projet_synthese_menu"
             android:orderInCategory="100"
             android:icon="@drawable/ic_menu_synthese"
