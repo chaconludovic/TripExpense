@@ -74,7 +74,7 @@ public class GestionProjetActivity extends ListActivity {
                     projetACharger.definirEnTantQueCourant();
                     databaseHandler.ajouterOuModifierProjet(projetACharger);
                     Intent i = new Intent(getApplicationContext(),
-                            SyntheseActivity.class);
+                            FicheProjetActivity.class);
                     // sending data to new activity
                     i.putExtra(ID_PROJET_COURANT, projetACharger.getId());
                     startActivity(i);
@@ -131,10 +131,10 @@ public class GestionProjetActivity extends ListActivity {
                     Projet projetAModifier = (Projet) lv.getAdapter().getItem(
                             menuInfo.position);
                     Intent i = new Intent(getApplicationContext(),
-                            AjouterProjetActivity.class);
+                            FicheProjetActivity.class);
                     // sending data to new activity
                     i.putExtra(ID_PROJET_COURANT, projetAModifier.getId());
-                    startActivityForResult(i, REQUEST_AJOUTER_PROJET);
+                    startActivity(i);
                 } catch (Exception e) {
                     Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }

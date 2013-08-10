@@ -142,14 +142,16 @@ public class SyntheseActivity extends ListActivity implements SensorEventListene
         super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.gestion_synthese_projet_menu:
-                startActivity(new Intent(getApplicationContext(),
-                        GestionProjetActivity.class));
+                Intent pageFicheProjet = new Intent(getApplicationContext(),
+                        FicheProjetActivity.class);
+                pageFicheProjet.putExtra(GestionProjetActivity.ID_PROJET_COURANT, idProjet);
+                startActivity(pageFicheProjet);
                 return true;
             case R.id.gestion_synthese_participant_menu:
-                Intent i = new Intent(getApplicationContext(),
+                Intent pageGestionParticipant = new Intent(getApplicationContext(),
                         GestionParticipantActivity.class);
-                i.putExtra(GestionProjetActivity.ID_PROJET_COURANT, idProjet);
-                startActivity(i);
+                pageGestionParticipant.putExtra(GestionProjetActivity.ID_PROJET_COURANT, idProjet);
+                startActivity(pageGestionParticipant);
                 return true;
             case R.id.gestion_synthese_depense_menu:
                 Intent pageDepense = new Intent(getApplicationContext(),

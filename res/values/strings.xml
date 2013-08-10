@@ -40,6 +40,9 @@
     <string name="title_activity_gestion_emprunt">Gestion Emprunt</string>
     <string name="title_activity_ajouter_emprunt">Ajouter Emprunt</string>
     <string name="button_ajouterNouvelEmprunt">Ajouter emprunt</string>
+    <!-- Page de fiche de projet-->
+    <string name="title_activity_fiche_projet">Fiche Projet</string>
+    <string name="modifier_projet_menu">Modifier le projet</string>
 
     <color name="text_color">#31D1F1</color>
     <color name="white">#ffffff</color>

@@ -81,6 +81,9 @@
             android:name="com.eldoraludo.tripexpense.AjouterEmpruntActivity"
             android:label="@string/title_activity_ajouter_emprunt" >
         </activity>
+        <activity
+                android:name=".FicheProjetActivity"
+                android:label="@string/title_activity_fiche_projet"/>
     </application>
 <instrumentation android:name="android.test.InstrumentationTestRunner"
                      android:targetPackage="com.eldoraludo.tripexpense"
