@@ -47,11 +47,15 @@ public class EmpruntArrayAdapter extends ArrayAdapter<Emprunt> {
         Participant emprunteur = databaseHandler.trouverLeParticipant(emprunt
                 .getEmprunteurId());
         nomEmprunteurText.setText(emprunteur.getNom());
-        montantEtDateText.setText("a emprunté " + emprunt.getMontant() + " euros le " + DateHelper.prettyDate(emprunt.getDateEmprunt()) + " à ");
+        montantEtDateText.setText(new StringBuilder()
+                .append("a emprunté ")
+                .append(emprunt.getMontant())
+                .append(" euros le ")
+                .append(DateHelper.prettyDate(emprunt.getDateEmprunt())).append(" à ").toString());
         Participant participant = databaseHandler.trouverLeParticipant(emprunt
                 .getParticipantId());
         nomParticipantText.setText(participant.getNom());
-        nomDeLEmpruntText.setText("(" + emprunt.getNomEmprunt() + ")");
+        nomDeLEmpruntText.setText(new StringBuilder().append("(").append(emprunt.getNomEmprunt()).append(")").toString());
 
         return empruntLigneView;
     }

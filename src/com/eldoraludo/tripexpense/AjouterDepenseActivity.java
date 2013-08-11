@@ -102,6 +102,7 @@ public class AjouterDepenseActivity extends Activity {
                         .trouverLeParticipant(depense.getParticipantId());
                 int pos = list.indexOf(participant);
                 listeParticipant.setSelection(pos);
+                ajouterOuModifierDepenseButton.setText("Modifier");
             } catch (Exception e) {
                 Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }

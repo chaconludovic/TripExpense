@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import com.eldoraludo.tripexpense.entite.Depense;
 import com.eldoraludo.tripexpense.entite.Emprunt;
 import com.eldoraludo.tripexpense.entite.Participant;
 import com.eldoraludo.tripexpense.entite.Projet;
+import com.eldoraludo.tripexpense.util.DateHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +60,9 @@ public class FicheProjetActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
             case R.id.fiche_projet_ajouter_participant_menu:
                 Intent i = new Intent(getApplicationContext(),
                         GestionParticipantActivity.class);
@@ -73,14 +78,18 @@ public class FicheProjetActivity extends Activity {
                 return true;
             case R.id.fiche_projet_envoyer_email_menu:
                 String to = this.recupererLaListeDEmail().toString();
-                String subject = "test sujet";
-                String message = recupererLaSynthese();
+                String subject = new StringBuilder().append("Synthèse des dettes du séjour ").append(databaseHandler.trouverLeProjet(idProjet).getNom()).append(" avec TripExpense").toString();
+                StringBuilder message = recupererLesInfosDuProjet()
+                        .append(recupererLaSynthese())
+                        .append(recupererLesDepenses())
+                        .append(recupererLesEmprunts())
+                        .append(recuperGreetings());
                 Intent email = new Intent(Intent.ACTION_SEND);
                 email.putExtra(Intent.EXTRA_EMAIL, new String[]{to});
                 //email.putExtra(Intent.EXTRA_CC, new String[]{ to});
                 //email.putExtra(Intent.EXTRA_BCC, new String[]{to});
                 email.putExtra(Intent.EXTRA_SUBJECT, subject);
-                email.putExtra(Intent.EXTRA_TEXT, message);
+                email.putExtra(Intent.EXTRA_TEXT, message.toString());
 
                 //need this to prompts email client only
                 email.setType("message/rfc822");
@@ -99,14 +108,45 @@ public class FicheProjetActivity extends Activity {
         return true;
     }
 
-    private String recupererLaSynthese() {
+    private StringBuilder recuperGreetings() {
+        return new StringBuilder().append("\nMerci d'avoir utiliser TripExpense et à Bientôt\n\nTripExpense Team");
+    }
+
+    private StringBuilder recupererLesInfosDuProjet() {
+        Projet projet = databaseHandler.trouverLeProjet(idProjet);
+        StringBuilder projetStr = new StringBuilder("Séjour: ");
+        projetStr.append(projet.getNom()).append("\n");
+        return projetStr;
+    }
+
+    private StringBuilder recupererLaSynthese() {
         List<SyntheseDTO> listeDettes = getListeDettes();
-        StringBuilder synthese = new StringBuilder();
+        StringBuilder synthese = new StringBuilder("\nLa synthèse:\n");
         for (SyntheseDTO syntheseDTO : listeDettes) {
-            synthese.append(syntheseDTO.getParticipant().getNom() + " doit la somme de "
-                    + syntheseDTO.getMontant() + " euros à " + syntheseDTO.getDepenseur().getNom()).append("\n");
+            synthese.append("-").append(syntheseDTO.getParticipant().getNom()).append(" doit la somme de ").append(syntheseDTO.getMontant()).append(" euros à ").append(syntheseDTO.getDepenseur().getNom()).append("\n");
         }
-        return synthese.toString();
+        return synthese;
+    }
+
+    private String recupererLesDepenses() {
+        List<Depense> depenses = databaseHandler.getAllDepense(idProjet);
+        StringBuilder depenseStr = new StringBuilder("\nLes dépenses:\n");
+        for (Depense depense : depenses) {
+            Participant participant = databaseHandler.trouverLeParticipant(depense.getParticipantId());
+            depenseStr.append("-").append(participant.getNom()).append(" a dépensé ").append(depense.getMontant()).append(" euros entre le ").append(DateHelper.prettyDate(depense.getDateDebut())).append(" et le ").append(DateHelper.prettyDate(depense.getDateFin())).append("\n");
+        }
+        return depenseStr.toString();
+    }
+
+    private String recupererLesEmprunts() {
+        List<Emprunt> emprunts = databaseHandler.getAllEmprunt(idProjet);
+        StringBuilder empruntsStr = new StringBuilder("\nLes emprunts:\n");
+        for (Emprunt emprunt : emprunts) {
+            Participant emprunteur = databaseHandler.trouverLeParticipant(emprunt.getEmprunteurId());
+            Participant participant = databaseHandler.trouverLeParticipant(emprunt.getParticipantId());
+            empruntsStr.append("-").append(emprunteur.getNom()).append(" a emprunté ").append(emprunt.getMontant()).append(" euros le ").append(DateHelper.prettyDate(emprunt.getDateEmprunt())).append(" à ").append(participant.getNom()).append("\n");
+        }
+        return empruntsStr.toString();
     }
 
     private List<SyntheseDTO> getListeDettes() {
@@ -130,7 +170,7 @@ public class FicheProjetActivity extends Activity {
             if (participant.getContactPhoneId() == null) {
                 continue;
             }
-            Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?", new String[]{participant.getContactPhoneId()}, null);
+            Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, new StringBuilder().append(ContactsContract.CommonDataKinds.Email.CONTACT_ID).append("=?").toString(), new String[]{participant.getContactPhoneId()}, null);
             if (cursor.moveToFirst()) {
                 emails.append(cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA1))).append(";");
             }

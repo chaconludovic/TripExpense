@@ -43,6 +43,7 @@
     <!-- Page de fiche de projet-->
     <string name="title_activity_fiche_projet">Fiche Projet</string>
     <string name="modifier_projet_menu">Modifier le projet</string>
+    <string name="envoyer_email_menu">Envoyer la synthèse par email</string>
 
     <color name="text_color">#31D1F1</color>
     <color name="white">#ffffff</color>

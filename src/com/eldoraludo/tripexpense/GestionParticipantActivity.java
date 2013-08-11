@@ -3,6 +3,7 @@ package com.eldoraludo.tripexpense;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -199,6 +200,9 @@ public class GestionParticipantActivity extends ListActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
             case R.id.gestion_participant_synthese_menu:
                 Intent pageSynthese = new Intent(getApplicationContext(),
                         SyntheseActivity.class);

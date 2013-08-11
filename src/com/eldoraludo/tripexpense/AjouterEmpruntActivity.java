@@ -104,6 +104,7 @@ public class AjouterEmpruntActivity extends Activity {
                 listeEmprunteur.setSelection(posEmprunteur);
                 int posParticipant = list.indexOf(participant);
                 listeParticipant.setSelection(posParticipant);
+                ajouterOuModifierEmpruntButton.setText("Modifier");
             } catch (Exception e) {
                 Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }

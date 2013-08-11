@@ -45,9 +45,14 @@ public class DepenseArrayAdapter extends ArrayAdapter<Depense> {
         Participant participant = databaseHandler.trouverLeParticipant(depense
                 .getParticipantId());
         nomParticipantText.setText(participant.getNom());
-        montantEtDatesText.setText("a dépensé " + depense.getMontant() + " euros entre le " + DateHelper.prettyDate(depense.getDateDebut())
-                + " et le " + DateHelper.prettyDate(depense.getDateFin()));
-        nomDeLaDepenseText.setText("(" + depense.getNomDepense() + ")");
+        montantEtDatesText.setText(new StringBuilder()
+                .append("a dépensé ")
+                .append(depense.getMontant())
+                .append(" euros entre le ")
+                .append(DateHelper.prettyDate(depense.getDateDebut()))
+                .append(" et le ")
+                .append(DateHelper.prettyDate(depense.getDateFin())).toString());
+        nomDeLaDepenseText.setText(new StringBuilder().append("(").append(depense.getNomDepense()).append(")").toString());
         return depenseLigneView;
     }
 }

@@ -42,8 +42,11 @@ public class SyntheseArrayAdapter extends ArrayAdapter<SyntheseDTO> {
         this.definirPhoto(syntheseDTO.getParticipant(), photoParticipant);
         TextView syntheseText = (TextView) depenseLigneView
                 .findViewById(R.id.syntheseText);
-        syntheseText.setText(syntheseDTO.getParticipant().getNom() + " doit la somme de "
-                + syntheseDTO.getMontant() + " euros à " + syntheseDTO.getDepenseur().getNom());
+        syntheseText.setText(new StringBuilder()
+                .append(syntheseDTO.getParticipant().getNom())
+                .append(" doit la somme de ")
+                .append(syntheseDTO.getMontant())
+                .append(" euros à ").append(syntheseDTO.getDepenseur().getNom()).toString());
         ImageView photoDepenseur = (ImageView) depenseLigneView.findViewById(R.id.photo_depenseur);
         this.definirPhoto(syntheseDTO.getDepenseur(), photoDepenseur);
         return depenseLigneView;

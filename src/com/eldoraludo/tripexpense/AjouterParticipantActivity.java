@@ -92,6 +92,7 @@ public class AjouterParticipantActivity extends Activity {
                     idContactRecupereDepuisListeContact = participant.getContactPhoneId();
                     nomRecupererDepuisListeContact = participant.getNom();
                 }
+                ajouterOuModifierParticipantButton.setText("Modifier");
             } catch (Exception e) {
                 Toast.makeText(this, "Une erreur est arrivée: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }

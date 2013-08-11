@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eldoraludo.tripexpense.database.DatabaseHandler;
@@ -32,6 +31,7 @@ public class AjouterProjetActivity extends Activity {
         if (idProjet != -1) {
             Projet projet = databaseHandler.trouverLeProjet(idProjet);
             nomProjetText.setText(projet.getNom());
+            ajouterOuModifierProjetButton.setText("Modifier");
         }
 
     }
